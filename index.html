@@ -1,357 +1,917 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-BR" class="h-full">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Central de Links</title>
-  <style>
-    :root {
-      --bg-color: #0f172a;
-      --card-bg: #1e293b;
-      --accent: #38bdf8;
-      --text: #f8fafc;
-      --text-sub: #94a3b8;
-    }
-
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    }
-
-    body {
-      background-color: var(--bg-color);
-      color: var(--text);
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding: 20px;
-    }
-
-    .container {
-      width: 100%;
-      max-width: 420px;
-      margin-top: 20px;
-    }
-
-    /* VISTA PÚBLICA (O que os clientes veem) */
-    .profile-header {
-      text-align: center;
-      margin-bottom: 30px;
-    }
-
-    .banner {
-      width: 100%;
-      height: 120px;
-      object-fit: cover;
-      border-radius: 12px;
-      margin-bottom: -40px;
-    }
-
-    .avatar {
-      width: 90px;
-      height: 90px;
-      border-radius: 50%;
-      border: 3px solid var(--card-bg);
-      object-fit: cover;
-      position: relative;
-      background-color: #334155;
-    }
-
-    h1 {
-      font-size: 22px;
-      margin-top: 10px;
-      color: var(--text);
-    }
-
-    p {
-      font-size: 13px;
-      color: var(--text-sub);
-      margin-top: 5px;
-      padding: 0 10px;
-    }
-
-    .link-btn {
-      display: block;
-      width: 100%;
-      background-color: var(--card-bg);
-      color: var(--text);
-      text-align: center;
-      padding: 14px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-      text-decoration: none;
-      font-weight: 600;
-      border: 1px solid #334155;
-      transition: transform 0.2s, background-color 0.2s;
-    }
-
-    .link-btn:hover {
-      background-color: #2b3b52;
-      transform: translateY(-2px);
-    }
-
-    /* PAINEL ADMINISTRATIVO (Só aparece quando fazes login) */
-    .admin-panel {
-      background-color: var(--card-bg);
-      padding: 20px;
-      border-radius: 16px;
-      margin-top: 30px;
-      border: 1px dashed var(--accent);
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    input, button {
-      width: 100%;
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #334155;
-      background-color: #0f172a;
-      color: #fff;
-      font-size: 14px;
-      margin-bottom: 10px;
-    }
-
-    button {
-      background-color: var(--accent);
-      color: #0f172a;
-      font-weight: bold;
-      cursor: pointer;
-      border: none;
-    }
-
-    .admin-controls {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 15px;
-    }
-
-    .btn-logout {
-      background-color: #ef4444;
-      color: white;
-      width: auto;
-      padding: 6px 12px;
-      font-size: 12px;
-    }
-
-    .btn-del {
-      background-color: #ef4444;
-      color: white;
-      width: auto;
-      padding: 4px 8px;
-      font-size: 11px;
-    }
-
-    .link-item-admin {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background-color: #0f172a;
-      padding: 8px 12px;
-      border-radius: 6px;
-      margin-bottom: 6px;
-      font-size: 13px;
-    }
-
-    /* Rodapé com botão secreto de login para ti */
-    footer {
-      margin-top: 40px;
-      text-align: center;
-      font-size: 11px;
-      color: var(--text-sub);
-    }
-
-    footer a {
-      color: var(--text-sub);
-      text-decoration: none;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Central - Central de Links Personalizada</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts Inter & Outfit -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;600;800&display=swap" rel="stylesheet">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Outfit', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.25)',
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.5)',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.07);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+        }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        .phone-frame {
+            width: 100%;
+            max-width: 390px;
+            height: 780px;
+            border-radius: 48px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 12px #18181b, 0 0 0 14px #27272a;
+            position: relative;
+            overflow: hidden;
+        }
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 28px;
+            background-color: #18181b;
+            border-bottom-left-radius: 18px;
+            border-bottom-right-radius: 18px;
+            z-index: 50;
+        }
+    </style>
 </head>
-<body>
+<body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
 
-  <div class="container">
-    
-    <!-- CABEÇALHO PÚBLICO (Visível para todos) -->
-    <div class="profile-header">
-      <!-- Podes alterar a imagem de fundo e o avatar aqui diretamente -->
-      <img src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?w=500" alt="Banner" class="banner">
-      <img src="https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=150" alt="Avatar" class="avatar">
-      <h1>Sua Marca / Perfil</h1>
-      <p>Centralize todos os seus links em um único lugar interativo e profissional.</p>
+    <!-- Header / Navbar Principal -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl shadow-lg shadow-blue-500/30">
+                    <i data-lucide="link-2" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="font-display font-bold text-lg tracking-tight leading-none text-white">Link Central</h1>
+                    <span class="text-xs text-slate-400">Editor & Criador em Tempo Real</span>
+                </div>
+            </div>
+
+            <!-- Controles do Topo -->
+            <div class="flex items-center gap-2">
+                <button id="toggleViewBtn" onclick="toggleFullscreenPreview()" class="flex items-center gap-2 px-3 py-1.5 text-xs sm:text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg transition-all shadow-sm">
+                    <i data-lucide="eye" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline" id="toggleViewText">Modo Tela Cheia</span>
+                </button>
+                <button onclick="exportConfig()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg transition-all" title="Exportar backup em JSON">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span class="hidden md:inline">Exportar</span>
+                </button>
+                <label class="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg transition-all cursor-pointer" title="Importar backup em JSON">
+                    <i data-lucide="upload" class="w-4 h-4"></i>
+                    <span class="hidden md:inline">Importar</span>
+                    <input type="file" id="importJsonInput" accept=".json" class="hidden" onchange="importConfig(event)">
+                </label>
+                <button onclick="resetToDefault()" class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all" title="Redefinir para Padrão">
+                    <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Layout Principal com Sidebar de Controle e Área de Preview -->
+    <main class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
+
+        <!-- Painel de Configuração / Edição (Esquerda) -->
+        <aside id="editorPanel" class="w-full lg:w-[500px] xl:w-[550px] border-r border-slate-800 bg-slate-900/60 flex flex-col h-[calc(100vh-61px)] overflow-y-auto">
+            
+            <!-- Abas de Navegação -->
+            <div class="flex border-b border-slate-800 bg-slate-900/90 sticky top-0 z-20">
+                <button onclick="switchTab('profile')" id="tab-profile" class="flex-1 py-3 px-2 text-xs font-semibold text-blue-400 border-b-2 border-blue-500 flex items-center justify-center gap-1.5 transition-all">
+                    <i data-lucide="user" class="w-4 h-4"></i> Perfil
+                </button>
+                <button onclick="switchTab('design')" id="tab-design" class="flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition-all">
+                    <i data-lucide="palette" class="w-4 h-4"></i> Design
+                </button>
+                <button onclick="switchTab('links')" id="tab-links" class="flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition-all">
+                    <i data-lucide="list-plus" class="w-4 h-4"></i> Links
+                </button>
+                <button onclick="switchTab('social')" id="tab-social" class="flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition-all">
+                    <i data-lucide="share-2" class="w-4 h-4"></i> Sociais
+                </button>
+            </div>
+
+            <div class="p-5 space-y-6 flex-1">
+
+                <!-- ABA 1: PERFIL & APRESENTAÇÃO -->
+                <div id="content-profile" class="space-y-5">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                        <i data-lucide="user-check" class="w-4 h-4 text-blue-400"></i> Informações do Perfil
+                    </h2>
+
+                    <!-- Banner de Topo -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-medium text-slate-300 flex justify-between">
+                            <span>Banner de Topo (Opcional)</span>
+                            <button onclick="removeImage('banner')" class="text-red-400 hover:underline text-[10px]">Remover</button>
+                        </label>
+                        <div class="flex items-center gap-3">
+                            <input type="file" id="bannerUpload" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'banner')">
+                            <label for="bannerUpload" class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-dashed border-slate-700 bg-slate-800/50 hover:bg-slate-800 hover:border-slate-500 cursor-pointer text-xs text-slate-300 transition-all">
+                                <i data-lucide="image" class="w-4 h-4 text-blue-400"></i> Upload do Banner
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Foto de Perfil / Logo -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-medium text-slate-300">Foto de Perfil / Logo</label>
+                        <div class="flex items-center gap-3">
+                            <input type="file" id="avatarUpload" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'avatar')">
+                            <label for="avatarUpload" class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-dashed border-slate-700 bg-slate-800/50 hover:bg-slate-800 hover:border-slate-500 cursor-pointer text-xs text-slate-300 transition-all">
+                                <i data-lucide="upload-cloud" class="w-4 h-4 text-blue-400"></i> Upload da Imagem / Logo
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Formato da Imagem de Perfil -->
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setAvatarShape('rounded-full')" class="p-2 border border-slate-700 bg-slate-800/60 rounded-lg text-xs hover:border-blue-500 text-slate-300 text-center">Redonda</button>
+                        <button onclick="setAvatarShape('rounded-2xl')" class="p-2 border border-slate-700 bg-slate-800/60 rounded-lg text-xs hover:border-blue-500 text-slate-300 text-center">Arredondada</button>
+                        <button onclick="setAvatarShape('rounded-none')" class="p-2 border border-slate-700 bg-slate-800/60 rounded-lg text-xs hover:border-blue-500 text-slate-300 text-center">Quadrada</button>
+                    </div>
+
+                    <!-- Nome do Perfil -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-medium text-slate-300">Nome ou Título</label>
+                        <input type="text" id="inputName" oninput="updateProfileData()" placeholder="Seu Nome ou Marca" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-blue-500 transition-all">
+                    </div>
+
+                    <!-- Subtítulo / Bio -->
+                    <div class="space-y-1.5">
+                        <label class="text-xs font-medium text-slate-300">Biografia / Descrição</label>
+                        <textarea id="inputBio" oninput="updateProfileData()" rows="3" placeholder="Sua descrição, slogan ou frase inspiradora..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-blue-500 transition-all resize-none"></textarea>
+                    </div>
+                </div>
+
+                <!-- ABA 2: DESIGN & ESTILO -->
+                <div id="content-design" class="space-y-5 hidden">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-blue-400"></i> Personalização do Fundo & Cores
+                    </h2>
+
+                    <!-- Tipo de Fundo -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-medium text-slate-300">Estilo de Fundo</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="setBgType('solid')" class="p-2 bg-slate-800 border border-slate-700 rounded-xl text-xs hover:border-blue-500">Cor Sólida</button>
+                            <button onclick="setBgType('gradient')" class="p-2 bg-slate-800 border border-slate-700 rounded-xl text-xs hover:border-blue-500">Gradiente</button>
+                            <button onclick="setBgType('image')" class="p-2 bg-slate-800 border border-slate-700 rounded-xl text-xs hover:border-blue-500 col-span-2">Imagem de Fundo (Galeria)</button>
+                        </div>
+                    </div>
+
+                    <!-- Config do Fundo por Opção -->
+                    <div id="bgSolidConfig" class="space-y-2">
+                        <label class="text-xs font-medium text-slate-300">Cor Principal de Fundo</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" id="bgColorInput" onchange="updateDesign()" class="w-10 h-10 rounded-lg border-0 bg-transparent cursor-pointer">
+                            <input type="text" id="bgColorText" oninput="syncColorInput('bgColorInput', this.value)" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs uppercase">
+                        </div>
+                    </div>
+
+                    <div id="bgGradientConfig" class="space-y-3 hidden">
+                        <label class="text-xs font-medium text-slate-300">Gradientes Pré-definidos</label>
+                        <div class="grid grid-cols-4 gap-2">
+                            <button onclick="setGradientPreset('from-slate-900 via-purple-900 to-slate-900')" class="h-10 rounded-lg bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 border border-slate-700"></button>
+                            <button onclick="setGradientPreset('from-blue-900 via-indigo-900 to-slate-950')" class="h-10 rounded-lg bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-950 border border-slate-700"></button>
+                            <button onclick="setGradientPreset('from-rose-900 via-pink-800 to-purple-950')" class="h-10 rounded-lg bg-gradient-to-r from-rose-900 via-pink-800 to-purple-950 border border-slate-700"></button>
+                            <button onclick="setGradientPreset('from-emerald-900 via-teal-900 to-slate-950')" class="h-10 rounded-lg bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-950 border border-slate-700"></button>
+                        </div>
+                    </div>
+
+                    <div id="bgImageConfig" class="space-y-2 hidden">
+                        <label class="text-xs font-medium text-slate-300">Imagem de Fundo Personalizada</label>
+                        <input type="file" id="bgImageUpload" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'bg')">
+                        <label for="bgImageUpload" class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-dashed border-slate-700 bg-slate-800/50 hover:bg-slate-800 cursor-pointer text-xs text-slate-300">
+                            <i data-lucide="image" class="w-4 h-4 text-blue-400"></i> Escolher Imagem da Galeria
+                        </label>
+                    </div>
+
+                    <!-- Cores dos Textos -->
+                    <div class="space-y-3 border-t border-slate-800 pt-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Cores dos Textos</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[11px] text-slate-400 block mb-1">Título / Nome</label>
+                                <input type="color" id="titleColorInput" onchange="updateDesign()" class="w-full h-8 rounded border-0 bg-transparent cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400 block mb-1">Biografia</label>
+                                <input type="color" id="bioColorInput" onchange="updateDesign()" class="w-full h-8 rounded border-0 bg-transparent cursor-pointer">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Estilo Padrão dos Botões de Links -->
+                    <div class="space-y-3 border-t border-slate-800 pt-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Estilo Geral dos Botões</h3>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="setButtonStyle('glass')" class="p-2 border border-slate-700 bg-white/10 backdrop-blur rounded-xl text-xs hover:border-blue-500">Efeito Glass</button>
+                            <button onclick="setButtonStyle('solid')" class="p-2 border border-slate-700 bg-blue-600 rounded-xl text-xs hover:border-blue-500">Sólido</button>
+                            <button onclick="setButtonStyle('outline')" class="p-2 border border-blue-500 rounded-xl text-xs hover:bg-blue-500/20">Contorno</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ABA 3: GERENCIADOR DE LINKS -->
+                <div id="content-links" class="space-y-5 hidden">
+                    <div class="flex items-center justify-between">
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                            <i data-lucide="link" class="w-4 h-4 text-blue-400"></i> Meus Links
+                        </h2>
+                        <button onclick="addNewLink()" class="px-3 py-1.5 text-xs bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg flex items-center gap-1 shadow-lg shadow-blue-600/30 transition-all">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Adicionar Link
+                        </button>
+                    </div>
+
+                    <!-- Lista de Links Cadastrados -->
+                    <div id="linksList" class="space-y-3">
+                        <!-- Gerado Dinamicamente -->
+                    </div>
+                </div>
+
+                <!-- ABA 4: REDES SOCIAIS -->
+                <div id="content-social" class="space-y-5 hidden">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                        <i data-lucide="share-2" class="w-4 h-4 text-blue-400"></i> Ícones Sociais no Rodapé
+                    </h2>
+                    <p class="text-xs text-slate-400">Preencha apenas os links que deseja exibir no perfil.</p>
+
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-2 bg-slate-800/60 p-2 rounded-xl border border-slate-700">
+                            <i data-lucide="message-circle" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+                            <input type="text" id="socialWhatsapp" oninput="updateSocials()" placeholder="WhatsApp (ex: https://wa.me/55...)" class="w-full bg-transparent text-xs focus:outline-none">
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-800/60 p-2 rounded-xl border border-slate-700">
+                            <i data-lucide="instagram" class="w-5 h-5 text-pink-400 shrink-0"></i>
+                            <input type="text" id="socialInstagram" oninput="updateSocials()" placeholder="Instagram (ex: https://instagram.com/seuuser)" class="w-full bg-transparent text-xs focus:outline-none">
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-800/60 p-2 rounded-xl border border-slate-700">
+                            <i data-lucide="send" class="w-5 h-5 text-sky-400 shrink-0"></i>
+                            <input type="text" id="socialTelegram" oninput="updateSocials()" placeholder="Telegram (ex: https://t.me/seuuser)" class="w-full bg-transparent text-xs focus:outline-none">
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-800/60 p-2 rounded-xl border border-slate-700">
+                            <i data-lucide="youtube" class="w-5 h-5 text-red-500 shrink-0"></i>
+                            <input type="text" id="socialYoutube" oninput="updateSocials()" placeholder="YouTube (ex: https://youtube.com/@seucanal)" class="w-full bg-transparent text-xs focus:outline-none">
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-800/60 p-2 rounded-xl border border-slate-700">
+                            <i data-lucide="facebook" class="w-5 h-5 text-blue-500 shrink-0"></i>
+                            <input type="text" id="socialFacebook" oninput="updateSocials()" placeholder="Facebook" class="w-full bg-transparent text-xs focus:outline-none">
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-800/60 p-2 rounded-xl border border-slate-700">
+                            <i data-lucide="mail" class="w-5 h-5 text-amber-400 shrink-0"></i>
+                            <input type="text" id="socialEmail" oninput="updateSocials()" placeholder="E-mail (ex: mailto:seuemail@dominio.com)" class="w-full bg-transparent text-xs focus:outline-none">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </aside>
+
+        <!-- Área de Preview / Visualização da Central de Links (Direita) -->
+        <section id="previewContainer" class="flex-1 bg-slate-950 flex items-center justify-center p-4 lg:p-8 overflow-y-auto min-h-[calc(100vh-61px)]">
+            
+            <!-- Smartphone Mockup Frame -->
+            <div id="phoneFrame" class="phone-frame transition-all duration-300 flex flex-col">
+                <div class="phone-notch"></div>
+                
+                <!-- Conteúdo do Preview Renderizado -->
+                <div id="previewCard" class="w-full h-full flex-1 overflow-y-auto flex flex-col justify-between p-6 relative transition-all bg-cover bg-center">
+                    
+                    <!-- Overlay Suave se Houver Imagem de Fundo -->
+                    <div id="previewOverlay" class="absolute inset-0 bg-black/20 z-0"></div>
+
+                    <!-- Conteúdo Principal -->
+                    <div class="relative z-10 w-full flex flex-col items-center">
+                        
+                        <!-- Banner de Cabeçalho -->
+                        <div id="previewBannerContainer" class="w-full -mx-6 -mt-6 mb-6 h-32 hidden overflow-hidden bg-slate-800/50">
+                            <img id="previewBanner" src="" alt="Banner" class="w-full h-full object-cover">
+                        </div>
+
+                        <!-- Foto de Perfil -->
+                        <div class="relative mb-4">
+                            <img id="previewAvatar" src="https://placehold.co/150x150/1e293b/ffffff?text=Logo" alt="Perfil" class="w-24 h-24 object-cover shadow-2xl border-2 border-white/20 rounded-full transition-all">
+                        </div>
+
+                        <!-- Nome e Biografia -->
+                        <h2 id="previewName" class="font-display font-bold text-xl text-center text-white mb-1 tracking-tight">Seu Nome Aqui</h2>
+                        <p id="previewBio" class="text-xs text-center text-slate-300 max-w-xs mb-6 font-normal leading-relaxed">Sua biografia inspiradora ou slogan curto vai aparecer bem aqui no topo do seu perfil.</p>
+
+                        <!-- Container dos Links -->
+                        <div id="previewLinks" class="w-full space-y-3.5 mb-6">
+                            <!-- Links renderizados aqui -->
+                        </div>
+                    </div>
+
+                    <!-- Rodapé com Redes Sociais -->
+                    <div class="relative z-10 w-full pt-4 border-t border-white/10 flex flex-col items-center gap-3">
+                        <div id="previewSocials" class="flex items-center justify-center gap-3 flex-wrap">
+                            <!-- Ícones sociais aqui -->
+                        </div>
+                        <span class="text-[10px] text-white/40 font-light">Criado com Central de Links</span>
+                    </div>
+
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <!-- Modal para Editar Ícone do Link / Upload Personalizado -->
+    <div id="iconModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-md w-full space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i data-lucide="image" class="w-4 h-4 text-blue-400"></i> Escolher Ícone do Link
+                </h3>
+                <button onclick="closeIconModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+
+            <!-- Upload da Imagem Própria -->
+            <div class="space-y-2">
+                <label class="text-xs font-medium text-slate-300">Upload de Ícone Próprio (Galeria/Arquivo)</label>
+                <input type="file" id="linkCustomIconUpload" accept="image/*" class="hidden" onchange="handleLinkCustomIconUpload(event)">
+                <label for="linkCustomIconUpload" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-dashed border-slate-700 bg-slate-800/50 hover:bg-slate-800 cursor-pointer text-xs text-slate-300">
+                    <i data-lucide="upload" class="w-4 h-4 text-blue-400"></i> Enviar do Dispositivo
+                </label>
+            </div>
+
+            <!-- Ou Escolher da Biblioteca Preset -->
+            <div class="space-y-2">
+                <label class="text-xs font-medium text-slate-300">Ou Escolher Ícone Padrão</label>
+                <div class="grid grid-cols-5 gap-2 max-h-48 overflow-y-auto p-1 bg-slate-950/50 rounded-xl border border-slate-800">
+                    <button onclick="selectPresetIcon('globe')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="globe" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('shopping-cart')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="shopping-cart" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('star')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="star" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('zap')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="zap" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('play-circle')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="play-circle" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('heart')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="heart" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('file-text')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="file-text" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('phone')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="phone" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('map-pin')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="map-pin" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('download')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="download" class="w-5 h-5"></i></button>
+                </div>
+            </div>
+        </div>
     </div>
 
-    <!-- LISTA DE LINKS PÚBLICOS (Onde os clientes clicam) -->
-    <div id="public-links-list">
-      <!-- Os links cadastrados aparecem aqui automaticamente -->
-    </div>
+    <!-- Script de Lógica do Aplicativo -->
+    <script>
+        // ESTADO GLOBAL DA APLICAÇÃO
+        let appConfig = {
+            profile: {
+                name: 'Sua Marca / Perfil',
+                bio: 'Centralize todos os seus links em um único lugar interativo e personalizável.',
+                avatar: 'https://placehold.co/150x150/3b82f6/ffffff?text=Logo',
+                avatarShape: 'rounded-full',
+                banner: ''
+            },
+            design: {
+                bgType: 'gradient', // 'solid', 'gradient', 'image'
+                bgColor: '#0f172a',
+                bgGradient: 'from-slate-900 via-indigo-950 to-slate-900',
+                bgImage: '',
+                titleColor: '#ffffff',
+                bioColor: '#cbd5e1',
+                buttonStyle: 'glass' // 'glass', 'solid', 'outline'
+            },
+            links: [
+                {
+                    id: 1,
+                    title: 'Nosso Website Oficial',
+                    subtitle: 'Conheça nossos produtos e serviços',
+                    url: 'https://google.com',
+                    iconType: 'preset', // 'preset' ou 'custom'
+                    icon: 'globe',
+                    bgColor: '#2563eb',
+                    textColor: '#ffffff'
+                },
+                {
+                    id: 2,
+                    title: 'Falar no WhatsApp Direct',
+                    subtitle: 'Atendimento Rápido e Orçamentos',
+                    url: 'https://wa.me/',
+                    iconType: 'preset',
+                    icon: 'phone',
+                    bgColor: '#059669',
+                    textColor: '#ffffff'
+                }
+            ],
+            socials: {
+                whatsapp: '',
+                instagram: '',
+                telegram: '',
+                youtube: '',
+                facebook: '',
+                email: ''
+            }
+        };
 
-    <!-- PAINEL DE CONTROLE (Só aparece se estiveres logado) -->
-    <div id="admin-section" class="admin-panel hidden">
-      <div class="admin-controls">
-        <h3>Painel de Gestão</h3>
-        <button class="btn-logout" id="btn-logout">Sair</button>
-      </div>
+        let currentEditingLinkId = null;
+        let isFullscreen = false;
 
-      <form id="add-link-form">
-        <input type="text" id="link-title" placeholder="Nome do Botão (ex: WhatsApp)" required>
-        <input type="url" id="link-url" placeholder="URL (https://...)" required>
-        <button type="submit">+ Adicionar Novo Link</button>
-      </form>
-
-      <div style="margin-top: 15px; font-size: 13px; color: var(--text-sub);">Links Atuais:</div>
-      <div id="admin-links-list" style="margin-top: 5px;"></div>
-    </div>
-
-    <!-- ÁREA DE LOGIN (Discreta no rodapé para entrares quando quiseres alterar algo) -->
-    <footer>
-      <div id="login-trigger">
-        <a href="#" id="show-login-btn">Área Administrativa</a>
-      </div>
-      
-      <div id="login-form-container" class="hidden" style="margin-top: 15px;">
-        <form id="login-form">
-          <input type="email" id="login-email" placeholder="E-mail" required>
-          <input type="password" id="login-password" placeholder="Senha" required>
-          <button type="submit">Entrar no Painel</button>
-        </form>
-      </div>
-    </footer>
-
-  </div>
-
-  <!-- SCRIPT DO FIREBASE -->
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-    import { getFirestore, collection, addDoc, getDocs, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
-
-    // A tua configuração do Firebase
-    const firebaseConfig = {
-      apiKey: "AIzaSyAJl7AX6LI4LdPW0XfeXLiAieyprfuUhAI",
-      authDomain: "cental-de-link.firebaseapp.com",
-      projectId: "cental-de-link",
-      storageBucket: "cental-de-link.firebasestorage.app",
-      messagingSenderId: "1024805588951",
-      appId: "1:1024805588951:web:af91f30db97d17f6a90592",
-      measurementId: "G-KD8863JGYY"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    const adminSection = document.getElementById('admin-section');
-    const loginTrigger = document.getElementById('login-trigger');
-    const loginFormContainer = document.getElementById('login-form-container');
-    const loginForm = document.getElementById('login-form');
-    const btnLogout = document.getElementById('btn-logout');
-    
-    const publicLinksList = document.getElementById('public-links-list');
-    const adminLinksList = document.getElementById('admin-links-list');
-    const addLinkForm = document.getElementById('add-link-form');
-
-    // Mostrar formulário de login ao clicar no rodapé
-    document.getElementById('show-login-btn').addEventListener('click', (e) => {
-      e.preventDefault();
-      loginFormContainer.classList.toggle('hidden');
-    });
-
-    // Fazer Login
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      try {
-        await signInWithEmailAndPassword(auth, document.getElementById('login-email').value, document.getElementById('login-password').value);
-        loginFormContainer.classList.add('hidden');
-      } catch (err) {
-        alert("Erro ao entrar: " + err.message);
-      }
-    });
-
-    // Logout
-    btnLogout.addEventListener('click', () => signOut(auth));
-
-    // Vigiar se estás logado ou não
-    onAuthStateChanged(auth, (user) => {
-      if (user) {
-        adminSection.classList.remove('hidden');
-        loginTrigger.classList.add('hidden');
-        loadLinks(true); // Carrega modo admin
-      } else {
-        adminSection.classList.add('hidden');
-        loginTrigger.classList.remove('hidden');
-        loadLinks(false); // Carrega modo público
-      }
-    });
-
-    // Adicionar Link
-    addLinkForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      try {
-        await addDoc(collection(db, "links"), {
-          title: document.getElementById('link-title').value,
-          url: document.getElementById('link-url').value,
-          createdAt: new Date()
+        // INICIALIZAÇÃO
+        window.addEventListener('DOMContentLoaded', () => {
+            loadConfigFromLocalStorage();
+            renderAll();
         });
-        document.getElementById('link-title').value = '';
-        document.getElementById('link-url').value = '';
-        loadLinks(true);
-      } catch (err) {
-        alert("Erro ao salvar: " + err.message);
-      }
-    });
 
-    // Carregar Links (para o público e para o painel)
-    async function loadLinks(isAdmin) {
-      try {
-        const querySnapshot = await getDocs(collection(db, "links"));
-        
-        publicLinksList.innerHTML = '';
-        if(isAdmin) adminLinksList.innerHTML = '';
+        // TROCA DE ABAS
+        function switchTab(tabName) {
+            const tabs = ['profile', 'design', 'links', 'social'];
+            tabs.forEach(t => {
+                document.getElementById(`tab-${t}`).className = "flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition-all";
+                document.getElementById(`content-${t}`).classList.add('hidden');
+            });
 
-        querySnapshot.forEach((docSnap) => {
-          const item = docSnap.data();
-          const docId = docSnap.id;
+            document.getElementById(`tab-${tabName}`).className = "flex-1 py-3 px-2 text-xs font-semibold text-blue-400 border-b-2 border-blue-500 flex items-center justify-center gap-1.5 transition-all";
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+        }
 
-          // Renderiza para o público
-          const a = document.createElement('a');
-          a.className = 'link-btn';
-          a.href = item.url;
-          a.target = '_blank';
-          a.innerText = item.title;
-          publicLinksList.appendChild(a);
+        // CARREGAR E SALVAR LOCALSTORAGE
+        function saveConfig() {
+            try {
+                localStorage.setItem('link_central_config', JSON.stringify(appConfig));
+            } catch (e) {
+                console.warn('Limite de armazenamento excedido para LocalStorage com imagens grandes.', e);
+            }
+        }
 
-          // Renderiza no painel de administração se logado
-          if (isAdmin) {
-            const div = document.createElement('div');
-            div.className = 'link-item-admin';
-            div.innerHTML = `
-              <span>${item.title}</span>
-              <button class="btn-del" onclick="window.deleteLinkItem('${docId}')">Excluir</button>
-            `;
-            adminLinksList.appendChild(div);
-          }
-        });
-      } catch (e) {
-        publicLinksList.innerHTML = '<p style="text-align:center; color:#94a3b8;">Nenhum link cadastrado ainda.</p>';
-      }
-    }
+        function loadConfigFromLocalStorage() {
+            const saved = localStorage.getItem('link_central_config');
+            if (saved) {
+                try {
+                    appConfig = JSON.parse(saved);
+                } catch(e) {
+                    console.error("Erro ao carregar do LocalStorage", e);
+                }
+            }
+        }
 
-    // Função global para excluir link
-    window.deleteLinkItem = async (id) => {
-      if (confirm("Deseja apagar este link?")) {
-        await deleteDoc(doc(db, "links", id));
-        loadLinks(true);
-      }
-    };
+        // RENDERIZAÇÃO COMPLETA DO PREVIEW E FORMULÁRIOS
+        function renderAll() {
+            renderProfileInputs();
+            renderDesignInputs();
+            renderSocialInputs();
+            renderLinksListEditor();
+            renderPreview();
+            lucide.createIcons();
+        }
 
-    // Carregar links ao iniciar a página
-    loadLinks(false);
-  </script>
+        // RENDERIZAR INPUTS DO PERFIL
+        function renderProfileInputs() {
+            document.getElementById('inputName').value = appConfig.profile.name;
+            document.getElementById('inputBio').value = appConfig.profile.bio;
+        }
+
+        function updateProfileData() {
+            appConfig.profile.name = document.getElementById('inputName').value;
+            appConfig.profile.bio = document.getElementById('inputBio').value;
+            saveConfig();
+            renderPreview();
+        }
+
+        function setAvatarShape(shapeClass) {
+            appConfig.profile.avatarShape = shapeClass;
+            saveConfig();
+            renderPreview();
+        }
+
+        // UPLOAD DE IMAGENS (BASE64)
+        function handleImageUpload(event, target) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64Image = e.target.result;
+                if (target === 'avatar') {
+                    appConfig.profile.avatar = base64Image;
+                } else if (target === 'banner') {
+                    appConfig.profile.banner = base64Image;
+                } else if (target === 'bg') {
+                    appConfig.design.bgImage = base64Image;
+                    appConfig.design.bgType = 'image';
+                }
+                saveConfig();
+                renderAll();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function removeImage(target) {
+            if (target === 'banner') appConfig.profile.banner = '';
+            if (target === 'avatar') appConfig.profile.avatar = 'https://placehold.co/150x150/1e293b/ffffff?text=Logo';
+            if (target === 'bg') appConfig.design.bgImage = '';
+            saveConfig();
+            renderAll();
+        }
+
+        // DESIGN E CORES
+        function renderDesignInputs() {
+            document.getElementById('bgColorInput').value = appConfig.design.bgColor;
+            document.getElementById('bgColorText').value = appConfig.design.bgColor;
+            document.getElementById('titleColorInput').value = appConfig.design.titleColor;
+            document.getElementById('bioColorInput').value = appConfig.design.bioColor;
+
+            // visibilidade dos painéis de fundo
+            document.getElementById('bgSolidConfig').classList.toggle('hidden', appConfig.design.bgType !== 'solid');
+            document.getElementById('bgGradientConfig').classList.toggle('hidden', appConfig.design.bgType !== 'gradient');
+            document.getElementById('bgImageConfig').classList.toggle('hidden', appConfig.design.bgType !== 'image');
+        }
+
+        function setBgType(type) {
+            appConfig.design.bgType = type;
+            saveConfig();
+            renderAll();
+        }
+
+        function setGradientPreset(gradientClass) {
+            appConfig.design.bgGradient = gradientClass;
+            saveConfig();
+            renderPreview();
+        }
+
+        function syncColorInput(inputId, hexValue) {
+            if (/^#[0-9A-F]{6}$/i.test(hexValue)) {
+                document.getElementById(inputId).value = hexValue;
+                updateDesign();
+            }
+        }
+
+        function updateDesign() {
+            appConfig.design.bgColor = document.getElementById('bgColorInput').value;
+            appConfig.design.titleColor = document.getElementById('titleColorInput').value;
+            appConfig.design.bioColor = document.getElementById('bioColorInput').value;
+            saveConfig();
+            renderPreview();
+        }
+
+        function setButtonStyle(style) {
+            appConfig.design.buttonStyle = style;
+            saveConfig();
+            renderPreview();
+        }
+
+        // REDES SOCIAIS
+        function renderSocialInputs() {
+            document.getElementById('socialWhatsapp').value = appConfig.socials.whatsapp || '';
+            document.getElementById('socialInstagram').value = appConfig.socials.instagram || '';
+            document.getElementById('socialTelegram').value = appConfig.socials.telegram || '';
+            document.getElementById('socialYoutube').value = appConfig.socials.youtube || '';
+            document.getElementById('socialFacebook').value = appConfig.socials.facebook || '';
+            document.getElementById('socialEmail').value = appConfig.socials.email || '';
+        }
+
+        function updateSocials() {
+            appConfig.socials.whatsapp = document.getElementById('socialWhatsapp').value;
+            appConfig.socials.instagram = document.getElementById('socialInstagram').value;
+            appConfig.socials.telegram = document.getElementById('socialTelegram').value;
+            appConfig.socials.youtube = document.getElementById('socialYoutube').value;
+            appConfig.socials.facebook = document.getElementById('socialFacebook').value;
+            appConfig.socials.email = document.getElementById('socialEmail').value;
+            saveConfig();
+            renderPreview();
+        }
+
+        // GERENCIAMENTO DE LINKS (EDITOR)
+        function renderLinksListEditor() {
+            const container = document.getElementById('linksList');
+            container.innerHTML = '';
+
+            appConfig.links.forEach((link, index) => {
+                const item = document.createElement('div');
+                item.className = "bg-slate-800/80 border border-slate-700/80 rounded-xl p-3.5 space-y-3 relative";
+                
+                item.innerHTML = `
+                    <div class="flex items-center justify-between gap-2 border-b border-slate-700/50 pb-2">
+                        <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                            <span class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-[10px] text-slate-400">${index + 1}</span>
+                            ${link.title || 'Novo Link'}
+                        </span>
+                        <div class="flex items-center gap-1">
+                            <button onclick="moveLink(${index}, -1)" class="p-1 hover:bg-slate-700 rounded text-slate-400" title="Mover para Cima"><i data-lucide="chevron-up" class="w-3.5 h-3.5"></i></button>
+                            <button onclick="moveLink(${index}, 1)" class="p-1 hover:bg-slate-700 rounded text-slate-400" title="Mover para Baixo"><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></button>
+                            <button onclick="deleteLink(${link.id})" class="p-1 hover:bg-red-500/20 text-red-400 rounded" title="Excluir Link"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-2">
+                        <input type="text" value="${link.title}" oninput="updateLinkItem(${link.id}, 'title', this.value)" placeholder="Título do Link" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
+                        <input type="text" value="${link.subtitle || ''}" oninput="updateLinkItem(${link.id}, 'subtitle', this.value)" placeholder="Subtítulo/Descrição (Opcional)" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-300">
+                        <input type="text" value="${link.url}" oninput="updateLinkItem(${link.id}, 'url', this.value)" placeholder="URL de Destino (https://...)" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-blue-400">
+                    </div>
+
+                    <div class="flex items-center justify-between gap-2 pt-1">
+                        <button onclick="openIconModal(${link.id})" class="flex items-center gap-1.5 text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 px-2.5 py-1.5 rounded-lg border border-slate-600 transition-all">
+                            <i data-lucide="image" class="w-3.5 h-3.5 text-blue-400"></i> Ícone
+                        </button>
+                        <div class="flex items-center gap-2">
+                            <label class="text-[10px] text-slate-400">Cor Botão:</label>
+                            <input type="color" value="${link.bgColor || '#2563eb'}" onchange="updateLinkItem(${link.id}, 'bgColor', this.value)" class="w-6 h-6 rounded border-0 bg-transparent cursor-pointer">
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
+        function addNewLink() {
+            const newId = Date.now();
+            appConfig.links.push({
+                id: newId,
+                title: 'Novo Botão de Link',
+                subtitle: 'Descrição rápida do link',
+                url: 'https://',
+                iconType: 'preset',
+                icon: 'link-2',
+                bgColor: '#2563eb',
+                textColor: '#ffffff'
+            });
+            saveConfig();
+            renderAll();
+        }
+
+        function deleteLink(id) {
+            appConfig.links = appConfig.links.filter(l => l.id !== id);
+            saveConfig();
+            renderAll();
+        }
+
+        function moveLink(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= appConfig.links.length) return;
+            const temp = appConfig.links[index];
+            appConfig.links[index] = appConfig.links[newIndex];
+            appConfig.links[newIndex] = temp;
+            saveConfig();
+            renderAll();
+        }
+
+        function updateLinkItem(id, field, value) {
+            const link = appConfig.links.find(l => l.id === id);
+            if (link) {
+                link[field] = value;
+                saveConfig();
+                renderPreview();
+            }
+        }
+
+        // MODAL DE ÍCONE DO LINK
+        function openIconModal(linkId) {
+            currentEditingLinkId = linkId;
+            document.getElementById('iconModal').classList.remove('hidden');
+        }
+
+        function closeIconModal() {
+            currentEditingLinkId = null;
+            document.getElementById('iconModal').classList.add('hidden');
+        }
+
+        function selectPresetIcon(iconName) {
+            if (!currentEditingLinkId) return;
+            const link = appConfig.links.find(l => l.id === currentEditingLinkId);
+            if (link) {
+                link.iconType = 'preset';
+                link.icon = iconName;
+                saveConfig();
+                renderAll();
+            }
+            closeIconModal();
+        }
+
+        function handleLinkCustomIconUpload(event) {
+            const file = event.target.files[0];
+            if (!file || !currentEditingLinkId) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const link = appConfig.links.find(l => l.id === currentEditingLinkId);
+                if (link) {
+                    link.iconType = 'custom';
+                    link.icon = e.target.result; // Base64
+                    saveConfig();
+                    renderAll();
+                }
+                closeIconModal();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // RENDERIZAÇÃO DO PREVIEW AO VIVO
+        function renderPreview() {
+            const previewCard = document.getElementById('previewCard');
+            const previewAvatar = document.getElementById('previewAvatar');
+            const previewName = document.getElementById('previewName');
+            const previewBio = document.getElementById('previewBio');
+            const previewLinks = document.getElementById('previewLinks');
+            const previewSocials = document.getElementById('previewSocials');
+            const previewBannerContainer = document.getElementById('previewBannerContainer');
+            const previewBanner = document.getElementById('previewBanner');
+
+            // 1. Aplicar Fundo
+            previewCard.className = "w-full h-full flex-1 overflow-y-auto flex flex-col justify-between p-6 relative transition-all bg-cover bg-center";
+            if (appConfig.design.bgType === 'solid') {
+                previewCard.style.backgroundImage = 'none';
+                previewCard.style.backgroundColor = appConfig.design.bgColor;
+            } else if (appConfig.design.bgType === 'gradient') {
+                previewCard.style.backgroundImage = 'none';
+                previewCard.className += ` bg-gradient-to-br ${appConfig.design.bgGradient}`;
+            } else if (appConfig.design.bgType === 'image' && appConfig.design.bgImage) {
+                previewCard.style.backgroundImage = `url('${appConfig.design.bgImage}')`;
+            }
+
+            // 2. Banner
+            if (appConfig.profile.banner) {
+                previewBanner.src = appConfig.profile.banner;
+                previewBannerContainer.classList.remove('hidden');
+            } else {
+                previewBannerContainer.classList.add('hidden');
+            }
+
+            // 3. Perfil
+            previewAvatar.src = appConfig.profile.avatar || 'https://placehold.co/150x150/1e293b/ffffff?text=Logo';
+            previewAvatar.className = `w-24 h-24 object-cover shadow-2xl border-2 border-white/20 transition-all ${appConfig.profile.avatarShape}`;
+            
+            previewName.innerText = appConfig.profile.name || 'Seu Nome';
+            previewName.style.color = appConfig.design.titleColor;
+
+            previewBio.innerText = appConfig.profile.bio || '';
+            previewBio.style.color = appConfig.design.bioColor;
+
+            // 4. Renderizar Links
+            previewLinks.innerHTML = '';
+            appConfig.links.forEach(link => {
+                const btn = document.createElement('a');
+                btn.href = link.url || '#';
+                btn.target = "_blank";
+                
+                let btnClasses = "w-full py-3 px-4 rounded-xl flex items-center justify-between gap-3 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 shadow-md group ";
+                
+                if (appConfig.design.buttonStyle === 'glass') {
+                    btnClasses += "glass-card hover:bg-white/25 text-white";
+                } else if (appConfig.design.buttonStyle === 'outline') {
+                    btnClasses += "border-2 border-white/80 bg-black/20 hover:bg-white/10 text-white";
+                } else {
+                    btnClasses += "text-white shadow-lg";
+                }
+
+                btn.className = btnClasses;
+                if (appConfig.design.buttonStyle === 'solid') {
+                    btn.style.backgroundColor = link.bgColor || '#2563eb';
+                }
+
+                let iconHtml = '';
+                if (link.iconType === 'custom' && link.icon) {
+                    iconHtml = `<img src="${link.icon}" class="w-5 h-5 rounded object-cover shrink-0">`;
+                } else {
+                    iconHtml = `<i data-lucide="${link.icon || 'link'}" class="w-5 h-5 shrink-0"></i>`;
+                }
+
+                btn.innerHTML = `
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        ${iconHtml}
+                        <div class="text-left truncate">
+                            <div class="text-xs font-semibold leading-snug truncate">${link.title || 'Link'}</div>
+                            ${link.subtitle ? `<div class="text-[10px] opacity-80 font-normal truncate">${link.subtitle}</div>` : ''}
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0"></i>
+                `;
+
+                previewLinks.appendChild(btn);
+            });
+
+            // 5. Renderizar Redes Sociais no Rodapé
+            previewSocials.innerHTML = '';
+            const socialMap = [
+                { key: 'whatsapp', icon: 'message-circle', color: 'hover:text-emerald-400' },
+                { key: 'instagram', icon: 'instagram', color: 'hover:text-pink-400' },
+                { key: 'telegram', icon: 'send', color: 'hover:text-sky-400' },
+                { key: 'youtube', icon: 'youtube', color: 'hover:text-red-500' },
+                { key: 'facebook', icon: 'facebook', color: 'hover:text-blue-500' },
+                { key: 'email', icon: 'mail', color: 'hover:text-amber-400' }
+            ];
+
+            socialMap.forEach(s => {
+                const url = appConfig.socials[s.key];
+                if (url && url.trim() !== '') {
+                    const iconLink = document.createElement('a');
+                    iconLink.href = url;
+                    iconLink.target = "_blank";
+                    iconLink.className = `p-2 bg-white/10 hover:bg-white/20 rounded-full text-white/80 transition-all ${s.color}`;
+                    iconLink.innerHTML = `<i data-lucide="${s.icon}" class="w-4 h-4"></i>`;
+                    previewSocials.appendChild(iconLink);
+                }
+            });
+
+            lucide.createIcons();
+        }
+
+        // TELA CHEIA / FULLSCREEN PREVIEW
+        function toggleFullscreenPreview() {
+            const editor = document.getElementById('editorPanel');
+            const phoneFrame = document.getElementById('phoneFrame');
+            const toggleText = document.getElementById('toggleViewText');
+
+            isFullscreen = !isFullscreen;
+
+            if (isFullscreen) {
+                editor.classList.add('hidden');
+                phoneFrame.classList.remove('phone-frame');
+                phoneFrame.classList.add('w-full', 'max-w-md', 'h-[85vh]', 'rounded-3xl', 'shadow-2xl');
+                toggleText.innerText = "Exibir Editor";
+            } else {
+                editor.classList.remove('hidden');
+                phoneFrame.classList.add('phone-frame');
+                phoneFrame.classList.remove('w-full', 'max-w-md', 'h-[85vh]', 'rounded-3xl', 'shadow-2xl');
+                toggleText.innerText = "Modo Tela Cheia";
+            }
+        }
+
+        // EXPORTAR E IMPORTAR CONFIGURAÇÕES
+        function exportConfig() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appConfig, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `central_links_backup.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importConfig(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const imported = JSON.parse(e.target.result);
+                    appConfig = imported;
+                    saveConfig();
+                    renderAll();
+                    alert('Configurações e links importados com sucesso!');
+                } catch(err) {
+                    alert('Erro ao ler arquivo JSON de importação.');
+                }
+            };
+            reader.readAsText(file);
+        }
+
+        function resetToDefault() {
+            if (confirm('Tem certeza que deseja redefinir todas as alterações para o padrão?')) {
+                localStorage.removeItem('link_central_config');
+                location.reload();
+            }
+        }
+    </script>
 </body>
 </html>
