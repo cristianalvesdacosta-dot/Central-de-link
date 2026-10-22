@@ -1,0 +1,363 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Central de Links</title>
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --text: #f8fafc;
+      --text-sub: #94a3b8;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 420px;
+      background-color: var(--card-bg);
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 20px;
+      color: var(--accent);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* Formulários */
+    .form-group {
+      margin-bottom: 15px;
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-size: 14px;
+      color: var(--text-sub);
+    }
+
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #334155;
+      background-color: #0f172a;
+      color: #fff;
+      font-size: 14px;
+    }
+
+    button {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: none;
+      background-color: var(--accent);
+      color: #0f172a;
+      font-weight: bold;
+      font-size: 15px;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+
+    button:hover {
+      opacity: 0.9;
+    }
+
+    .toggle-link {
+      text-align: center;
+      margin-top: 15px;
+      font-size: 13px;
+      color: var(--text-sub);
+      cursor: pointer;
+    }
+
+    /* Links Públicos */
+    .link-card {
+      display: block;
+      width: 100%;
+      padding: 14px;
+      margin-bottom: 12px;
+      background-color: #334155;
+      color: var(--text);
+      text-decoration: none;
+      text-align: center;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: transform 0.2s, background-color 0.2s;
+    }
+
+    .link-card:hover {
+      transform: translateY(-2px);
+      background-color: #475569;
+    }
+
+    /* Painel Admin */
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .btn-logout {
+      width: auto;
+      padding: 6px 12px;
+      font-size: 12px;
+      background-color: #ef4444;
+      color: #fff;
+    }
+
+    .link-item-admin {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #0f172a;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .btn-del {
+      background-color: #ef4444;
+      color: white;
+      width: auto;
+      padding: 4px 8px;
+      font-size: 12px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- TELA DE LOGIN / REGISTRO -->
+    <div id="auth-section">
+      <h2 id="auth-title">Acessar Painel</h2>
+      <form id="auth-form">
+        <div class="form-group">
+          <label>E-mail</label>
+          <input type="email" id="auth-email" required placeholder="seu@email.com">
+        </div>
+        <div class="form-group">
+          <label>Senha</label>
+          <input type="password" id="auth-password" required placeholder="******">
+        </div>
+        <button type="submit" id="btn-auth-submit">Entrar</button>
+      </form>
+      <div class="toggle-link" id="toggle-auth">
+        Não tem uma conta? Cadastre-se
+      </div>
+    </div>
+
+    <!-- TELA DO PAINEL ADMINISTRATIVO -->
+    <div id="admin-section" class="hidden">
+      <div class="admin-header">
+        <h3>Meus Links</h3>
+        <button class="btn-logout" id="btn-logout">Sair</button>
+      </div>
+
+      <form id="add-link-form" class="form-group">
+        <div class="form-group">
+          <input type="text" id="link-title" placeholder="Título do Botão (ex: WhatsApp)" required>
+        </div>
+        <div class="form-group">
+          <input type="url" id="link-url" placeholder="URL (https://...)" required>
+        </div>
+        <button type="submit">+ Adicionar Link</button>
+      </form>
+
+      <div id="admin-links-list"></div>
+    </div>
+
+    <!-- VISUALIZAÇÃO PÚBLICA DE LINKS -->
+    <div id="public-section" class="hidden">
+      <h2 id="public-user-title">Meus Links</h2>
+      <div id="public-links-container"></div>
+    </div>
+
+  </div>
+
+  <!-- SCRIPT COMPLETO DO FIREBASE v10 -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+    import { 
+      getAuth, 
+      signInWithEmailAndPassword, 
+      createUserWithEmailAndPassword, 
+      signOut, 
+      onAuthStateChanged 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+    import { 
+      getFirestore, 
+      collection, 
+      addDoc, 
+      getDocs, 
+      deleteDoc, 
+      doc, 
+      query, 
+      where 
+    } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+    // Configurações Oficiais do seu projeto 'cental-de-link[span_0](start_span)'[span_0](end_span)
+    const firebaseConfig = {
+      apiKey: "AIzaSyAjl7AX6LI4LdPW0XfeXLiAieyprfuUhAI",
+      authDomain: "cental-de-link.firebaseapp.com",
+      projectId: "cental-de-link",
+      storageBucket: "cental-de-link.firebasestorage.app",
+      messagingSenderId: "1024805588951",
+      appId: "1:1024805588951:web:d5fb16dab84fc6caa90592",
+      measurementId: "G-X9OHTD57HR"
+    };
+
+    // Inicialização
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    // Seleção de Elementos da Tela
+    const authSection = document.getElementById('auth-section');
+    const adminSection = document.getElementById('admin-section');
+    const publicSection = document.getElementById('public-section');
+    
+    const authForm = document.getElementById('auth-form');
+    const authEmail = document.getElementById('auth-email');
+    const authPassword = document.getElementById('auth-password');
+    const authTitle = document.getElementById('auth-title');
+    const btnAuthSubmit = document.getElementById('btn-auth-submit');
+    const toggleAuth = document.getElementById('toggle-auth');
+    const btnLogout = document.getElementById('btn-logout');
+
+    const addLinkForm = document.getElementById('add-link-form');
+    const linkTitle = document.getElementById('link-title');
+    const linkUrl = document.getElementById('link-url');
+    const adminLinksList = document.getElementById('admin-links-list');
+    const publicLinksContainer = document.getElementById('public-links-container');
+
+    let isSignUp = false;
+
+    // Alternar entre Login e Cadastro
+    toggleAuth.addEventListener('click', () => {
+      isSignUp = !isSignUp;
+      if (isSignUp) {
+        authTitle.innerText = "Criar Conta";
+        btnAuthSubmit.innerText = "Cadastrar";
+        toggleAuth.innerText = "Já tem uma conta? Faça Login";
+      } else {
+        authTitle.innerText = "Acessar Painel";
+        btnAuthSubmit.innerText = "Entrar";
+        toggleAuth.innerText = "Não tem uma conta? Cadastre-se";
+      }
+    });
+
+    // Submeter formulário de Autenticação
+    authForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const email = authEmail.value;
+      const password = authPassword.value;
+
+      try {
+        if (isSignUp) {
+          await createUserWithEmailAndPassword(auth, email, password);
+          alert("Conta criada com sucesso!");
+        } else {
+          await signInWithEmailAndPassword(auth, email, password);
+        }
+      } catch (error) {
+        alert("Erro: " + error.message);
+      }
+    });
+
+    // Logout
+    btnLogout.addEventListener('click', () => signOut(auth));
+
+    // Monitorar estado de autenticação do Usuário
+    onAuthStateChanged(auth, (user) => {
+      if (user) {
+        // Usuário logado
+        authSection.classList.add('hidden');
+        adminSection.classList.remove('hidden');
+        publicSection.classList.add('hidden');
+        loadAdminLinks(user.uid);
+      } else {
+        // Sem usuário logado
+        authSection.classList.remove('hidden');
+        adminSection.classList.add('hidden');
+        publicSection.classList.add('hidden');
+      }
+    });
+
+    // Adicionar novo Link ao Firestore (isolado por UID de usuário)
+    addLinkForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const user = auth.currentUser;
+      if (!user) return;
+
+      try {
+        await addDoc(collection(db, "links"), {
+          userId: user.uid,
+          title: linkTitle.value,
+          url: linkUrl.value,
+          createdAt: new Date()
+        });
+        linkTitle.value = '';
+        linkUrl.value = '';
+        loadAdminLinks(user.uid);
+      } catch (error) {
+        alert("Erro ao salvar link: " + error.message);
+      }
+    });
+
+    // Carregar Links do Painel Admin
+    async function loadAdminLinks(userId) {
+      adminLinksList.innerHTML = 'Carregando...';
+      const q = query(collection(db, "links"), where("userId", "==", userId));
+      const querySnapshot = await getDocs(q);
+      
+      adminLinksList.innerHTML = '';
+      querySnapshot.forEach((docSnap) => {
+        const item = docSnap.data();
+        const div = document.createElement('div');
+        div.className = 'link-item-admin';
+        div.innerHTML = `
+          <span><strong>${item.title}</strong></span>
+          <button class="btn-del" onclick="deleteLink('${docSnap.id}')">Excluir</button>
+        `;
+        adminLinksList.appendChild(div);
+      });
+    }
+
+    // Excluir Link
+    window.deleteLink = async (docId) => {
+      if (confirm("Deseja realmente excluir este link?")) {
+        await deleteDoc(doc(db, "links", docId));
+        loadAdminLinks(auth.currentUser.uid);
+      }
+    };
+  </script>
+</body>
+</html>
