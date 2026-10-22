@@ -50,14 +50,11 @@
             background: rgba(255, 255, 255, 0.2);
             border-radius: 9999px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(255, 255, 255, 0.4);
-        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
 
-    <!-- HEADER DO ADMINISTRADOR (Escondido por padrão) -->
+    <!-- BARRA SUPERIOR DO ADMINISTRADOR (Oculta por padrão) -->
     <header id="adminHeader" class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 px-4 py-3 hidden">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
             <div class="flex items-center gap-3">
@@ -66,7 +63,7 @@
                 </div>
                 <div>
                     <h1 class="font-display font-bold text-lg tracking-tight leading-none text-white">Link Central</h1>
-                    <span id="userWelcomeBadge" class="text-xs text-emerald-400 font-medium">● Administrador Conectado</span>
+                    <span id="userWelcomeBadge" class="text-xs text-emerald-400 font-medium">● Painel de Edição Ativo</span>
                 </div>
             </div>
 
@@ -94,10 +91,9 @@
     <!-- Layout Principal -->
     <main class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
 
-        <!-- PAINEL DE CONFIGURAÇÃO / EDIÇÃO -->
+        <!-- PAINEL DE CONFIGURAÇÃO / EDIÇÃO COMPLETO -->
         <aside id="editorPanel" class="w-full lg:w-[500px] xl:w-[550px] border-r border-slate-800 bg-slate-900/80 flex flex-col h-[calc(100vh-61px)] overflow-y-auto hidden">
             
-            <!-- Abas de Navegação -->
             <div class="flex border-b border-slate-800 bg-slate-900/90 sticky top-0 z-20">
                 <button onclick="switchTab('profile')" id="tab-profile" class="flex-1 py-3 px-2 text-xs font-semibold text-blue-400 border-b-2 border-blue-500 flex items-center justify-center gap-1.5 transition-all">
                     <i data-lucide="user" class="w-4 h-4"></i> Perfil
@@ -118,7 +114,7 @@
 
             <div class="p-5 space-y-6 flex-1">
 
-                <!-- ABA 1: PERFIL -->
+                <!-- ABA PERFIL -->
                 <div id="content-profile" class="space-y-5">
                     <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                         <i data-lucide="user-check" class="w-4 h-4 text-blue-400"></i> Informações do Perfil
@@ -160,11 +156,11 @@
 
                     <div class="space-y-1.5">
                         <label class="text-xs font-medium text-slate-300">Biografia / Descrição</label>
-                        <textarea id="inputBio" oninput="updateProfileData()" rows="3" placeholder="Sua descrição ou slogan..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-blue-500 resize-none"></textarea>
+                        <textarea id="inputBio" oninput="updateProfileData()" rows="3" placeholder="Sua descrição, slogan ou frase..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-blue-500 resize-none"></textarea>
                     </div>
                 </div>
 
-                <!-- ABA 2: DESIGN -->
+                <!-- ABA DESIGN -->
                 <div id="content-design" class="space-y-5 hidden">
                     <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                         <i data-lucide="sparkles" class="w-4 h-4 text-blue-400"></i> Personalização do Fundo & Cores
@@ -220,7 +216,7 @@
                     </div>
                 </div>
 
-                <!-- ABA 3: LINKS -->
+                <!-- ABA LINKS -->
                 <div id="content-links" class="space-y-5 hidden">
                     <div class="flex items-center justify-between">
                         <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
@@ -233,7 +229,7 @@
                     <div id="linksList" class="space-y-3"></div>
                 </div>
 
-                <!-- ABA 4: SOCIAIS -->
+                <!-- ABA SOCIAIS -->
                 <div id="content-social" class="space-y-5 hidden">
                     <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
                         <i data-lucide="share-2" class="w-4 h-4 text-blue-400"></i> Ícones Sociais no Rodapé
@@ -254,19 +250,19 @@
                     </div>
                 </div>
 
-                <!-- ABA 5: SEGURANÇA -->
+                <!-- ABA SEGURANÇA -->
                 <div id="content-security" class="space-y-5 hidden">
                     <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
-                        <i data-lucide="shield-check" class="w-4 h-4 text-blue-400"></i> Credenciais de Acesso
+                        <i data-lucide="shield-check" class="w-4 h-4 text-blue-400"></i> Alterar Credenciais
                     </h2>
                     <div class="space-y-3 bg-slate-800/50 p-4 rounded-xl border border-slate-700">
                         <div class="space-y-1">
-                            <label class="text-xs text-slate-300">Utilizador</label>
+                            <label class="text-xs text-slate-300">Utilizador Atual</label>
                             <input type="text" id="changeUsernameInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white">
                         </div>
                         <div class="space-y-1">
                             <label class="text-xs text-slate-300">Nova Senha</label>
-                            <input type="password" id="changePasswordInput" placeholder="Digite nova senha se desejar" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white">
+                            <input type="password" id="changePasswordInput" placeholder="Digite a nova senha" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white">
                         </div>
                         <button onclick="saveNewCredentials()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl transition-all">
                             Atualizar Credenciais
@@ -277,28 +273,9 @@
             </div>
         </aside>
 
-        <!-- ÁREA PÚBLICA / TELA DE APRESENTAÇÃO OU PERFIL -->
+        <!-- ÁREA PÚBLICA DE EXIBIÇÃO -->
         <section id="previewContainer" class="flex-1 min-h-screen w-full flex flex-col justify-between items-center p-4 sm:p-8 overflow-y-auto relative transition-all bg-cover bg-center bg-slate-950">
             
-            <!-- TELA DE APRESENTAÇÃO (Se o site estiver limpo / sem perfil configurado) -->
-            <div id="welcomeScreen" class="w-full max-w-lg my-auto mx-auto p-8 rounded-3xl glass-panel text-center space-y-6 shadow-2xl relative z-20 hidden">
-                <div class="w-16 h-16 bg-blue-600/20 border border-blue-500/40 text-blue-400 rounded-2xl flex items-center justify-center mx-auto shadow-glow">
-                    <i data-lucide="sparkles" class="w-8 h-8"></i>
-                </div>
-                <div class="space-y-2">
-                    <h1 class="font-display font-bold text-2xl text-white">Bem-vindo à Central de Links</h1>
-                    <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
-                        Esta é a sua página profissional de links centralizados. Reúna redes sociais, WhatsApp e sites em um só lugar de forma rápida, elegante e totalmente autônoma.
-                    </p>
-                </div>
-                <div class="pt-4 flex flex-col gap-3">
-                    <button onclick="openPasswordModal()" class="w-full py-3 px-6 bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
-                        <i data-lucide="user-plus" class="w-4 h-4"></i> Criar Minha Conta / Começar Agora
-                    </button>
-                </div>
-            </div>
-
-            <!-- PERFIL PÚBLICO NORMAL (Visível após configurado) -->
             <div id="publicProfileView" class="w-full max-w-md mx-auto flex-1 flex flex-col justify-between py-6 relative z-10">
                 <div id="previewOverlay" class="absolute inset-0 bg-black/20 -z-10 rounded-2xl"></div>
 
@@ -311,8 +288,8 @@
                         <img id="previewAvatar" src="https://placehold.co/150x150/1e293b/ffffff?text=Logo" alt="Perfil" class="w-28 h-28 object-cover shadow-2xl border-2 border-white/20 rounded-full transition-all">
                     </div>
 
-                    <h2 id="previewName" class="font-display font-bold text-2xl text-center text-white mb-1 tracking-tight"></h2>
-                    <p id="previewBio" class="text-xs sm:text-sm text-center text-slate-300 max-w-xs mb-6 font-normal leading-relaxed"></p>
+                    <h2 id="previewName" class="font-display font-bold text-2xl text-center text-white mb-1 tracking-tight">Sua Marca / Perfil</h2>
+                    <p id="previewBio" class="text-xs sm:text-sm text-center text-slate-300 max-w-xs mb-6 font-normal leading-relaxed">Centralize todos os seus links em um único lugar interativo.</p>
 
                     <div id="previewLinks" class="w-full space-y-3.5 mb-6"></div>
                 </div>
@@ -321,7 +298,8 @@
                     <div id="previewSocials" class="flex items-center justify-center gap-3 flex-wrap"></div>
                     <span class="text-[10px] text-white/40 font-light">Criado com Central de Links</span>
 
-                    <button onclick="openPasswordModal()" class="text-[11px] text-slate-500 hover:text-slate-300 mt-2 transition-all flex items-center gap-1 opacity-60 hover:opacity-100">
+                    <!-- BOTÃO DISCRETO -->
+                    <button onclick="openAuthModal()" class="text-[11px] text-slate-500 hover:text-slate-300 mt-2 transition-all flex items-center gap-1 opacity-60 hover:opacity-100">
                         <i data-lucide="lock" class="w-3 h-3"></i> Área do Administrador
                     </button>
                 </div>
@@ -331,50 +309,25 @@
 
     </main>
 
-    <!-- Modal para Editar Ícone do Link -->
-    <div id="iconModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-md w-full space-y-4">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 class="text-sm font-bold text-white flex items-center gap-2">
-                    <i data-lucide="image" class="w-4 h-4 text-blue-400"></i> Escolher Ícone do Link
-                </h3>
-                <button onclick="closeIconModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
-            </div>
-            <div class="space-y-2">
-                <label class="text-xs font-medium text-slate-300">Upload de Ícone Próprio</label>
-                <input type="file" id="linkCustomIconUpload" accept="image/*" class="hidden" onchange="handleLinkCustomIconUpload(event)">
-                <label for="linkCustomIconUpload" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-dashed border-slate-700 bg-slate-800/50 hover:bg-slate-800 cursor-pointer text-xs text-slate-300">
-                    <i data-lucide="upload" class="w-4 h-4 text-blue-400"></i> Enviar do Dispositivo
-                </label>
-            </div>
-            <div class="space-y-2">
-                <label class="text-xs font-medium text-slate-300">Ou Escolher Ícone Padrão</label>
-                <div class="grid grid-cols-5 gap-2 max-h-48 overflow-y-auto p-1 bg-slate-950/50 rounded-xl border border-slate-800">
-                    <button onclick="selectPresetIcon('globe')" class="p-2.5 hover:bg-blue-600/20 border border-transparent rounded-lg flex justify-center text-slate-300"><i data-lucide="globe" class="w-5 h-5"></i></button>
-                    <button onclick="selectPresetIcon('shopping-cart')" class="p-2.5 hover:bg-blue-600/20 border border-transparent rounded-lg flex justify-center text-slate-300"><i data-lucide="shopping-cart" class="w-5 h-5"></i></button>
-                    <button onclick="selectPresetIcon('star')" class="p-2.5 hover:bg-blue-600/20 border border-transparent rounded-lg flex justify-center text-slate-300"><i data-lucide="star" class="w-5 h-5"></i></button>
-                    <button onclick="selectPresetIcon('zap')" class="p-2.5 hover:bg-blue-600/20 border border-transparent rounded-lg flex justify-center text-slate-300"><i data-lucide="zap" class="w-5 h-5"></i></button>
-                    <button onclick="selectPresetIcon('phone')" class="p-2.5 hover:bg-blue-600/20 border border-transparent rounded-lg flex justify-center text-slate-300"><i data-lucide="phone" class="w-5 h-5"></i></button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Modal Dinâmico de Autenticação / Cadastro Inicial -->
+    <!-- MODAL DE AUTENTICAÇÃO COM 2 ABAS: CRIAR CADASTRO E ENTRAR -->
     <div id="passwordModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-xs w-full text-center space-y-4 shadow-2xl">
             <div class="w-12 h-12 bg-blue-600/20 border border-blue-500/30 text-blue-400 rounded-2xl flex items-center justify-center mx-auto">
                 <i data-lucide="shield-lock" class="w-6 h-6"></i>
             </div>
-            <div>
-                <h3 id="authModalTitle" class="text-sm font-bold text-white">Acesso do Administrador</h3>
-                <p id="authModalDesc" class="text-xs text-slate-400 mt-1">Insira suas credenciais:</p>
+
+            <!-- ABAS DE NAVEGAÇÃO DO MODAL -->
+            <div class="flex border-b border-slate-800 pb-2">
+                <button id="authTabLogin" onclick="setAuthMode('login')" class="flex-1 text-xs font-bold text-blue-400 border-b-2 border-blue-500 pb-1">Entrar</button>
+                <button id="authTabRegister" onclick="setAuthMode('register')" class="flex-1 text-xs font-bold text-slate-400 pb-1">Criar Cadastro</button>
             </div>
+
+            <p id="authModalDesc" class="text-xs text-slate-400">Insira suas credenciais para entrar:</p>
 
             <div class="space-y-2 text-left">
                 <div>
                     <label class="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">Utilizador</label>
-                    <input type="text" id="adminUserAuthInput" placeholder="Ex: meuusuario" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
+                    <input type="text" id="adminUserAuthInput" placeholder="Ex: cristian" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
                 </div>
                 <div>
                     <label class="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">Senha</label>
@@ -395,9 +348,9 @@
             adminUser: '',
             adminPassword: '',
             profile: {
-                name: '',
-                bio: '',
-                avatar: '',
+                name: 'Sua Marca / Perfil',
+                bio: 'Centralize todos os seus links em um único lugar interativo.',
+                avatar: 'https://placehold.co/150x150/1e293b/ffffff?text=Logo',
                 avatarShape: 'rounded-full',
                 banner: ''
             },
@@ -410,41 +363,53 @@
                 bioColor: '#cbd5e1',
                 buttonStyle: 'glass'
             },
-            links: [],
-            socials: { whatsapp: '', instagram: '', telegram: '', youtube: '', facebook: '', email: '' }
+            links: [
+                { id: 1, title: 'Nosso Website Oficial', subtitle: 'Conheça nossos produtos', url: 'https://google.com', icon: 'globe', bgColor: '#2563eb' }
+            ],
+            socials: { whatsapp: '', instagram: '', telegram: '' }
         };
 
-        let currentEditingLinkId = null;
+        let activeAuthMode = 'login'; // 'login' ou 'register'
 
         window.addEventListener('DOMContentLoaded', () => {
             loadConfigFromLocalStorage();
             renderAll();
         });
 
-        function openPasswordModal() {
-            const isFirstAccess = !appConfig.adminPassword;
-            const title = document.getElementById('authModalTitle');
-            const desc = document.getElementById('authModalDesc');
-            const btn = document.getElementById('authSubmitBtn');
-
-            if (isFirstAccess) {
-                title.innerText = "Criar Conta de Administrador";
-                desc.innerText = "Defina seu utilizador e senha para começar:";
-                btn.innerText = "Criar Conta";
-            } else {
-                title.innerText = "Acesso do Administrador";
-                desc.innerText = "Insira suas credenciais para gerir o site:";
-                btn.innerText = "Entrar";
-            }
-
+        function openAuthModal() {
             document.getElementById('passwordModal').classList.remove('hidden');
-            document.getElementById('adminUserAuthInput').focus();
+            // Se ainda não existirem credenciais, força a aba de 'Criar Cadastro'
+            if (!appConfig.adminPassword) {
+                setAuthMode('register');
+            } else {
+                setAuthMode('login');
+            }
         }
 
         function closePasswordModal() {
             document.getElementById('passwordModal').classList.add('hidden');
             document.getElementById('adminUserAuthInput').value = '';
             document.getElementById('adminPasswordInput').value = '';
+        }
+
+        function setAuthMode(mode) {
+            activeAuthMode = mode;
+            const tabLogin = document.getElementById('authTabLogin');
+            const tabReg = document.getElementById('authTabRegister');
+            const desc = document.getElementById('authModalDesc');
+            const btn = document.getElementById('authSubmitBtn');
+
+            if (mode === 'register') {
+                tabReg.className = "flex-1 text-xs font-bold text-blue-400 border-b-2 border-blue-500 pb-1";
+                tabLogin.className = "flex-1 text-xs font-bold text-slate-400 pb-1";
+                desc.innerText = "Crie um novo Utilizador e Senha de acesso:";
+                btn.innerText = "Criar Cadastro";
+            } else {
+                tabLogin.className = "flex-1 text-xs font-bold text-blue-400 border-b-2 border-blue-500 pb-1";
+                tabReg.className = "flex-1 text-xs font-bold text-slate-400 pb-1";
+                desc.innerText = "Insira suas credenciais para entrar no painel:";
+                btn.innerText = "Entrar";
+            }
         }
 
         function handleAuthSubmit() {
@@ -456,27 +421,25 @@
                 return;
             }
 
-            if (!appConfig.adminPassword) {
+            if (activeAuthMode === 'register') {
                 appConfig.adminUser = userInput;
                 appConfig.adminPassword = passInput;
-                if(!appConfig.profile.name) appConfig.profile.name = "Minha Marca / Perfil";
                 saveConfig();
-                alert("Conta criada com sucesso! Bem-vindo ao painel.");
-                closePasswordModal();
-                unlockAdminMode();
-                return;
-            }
-
-            if (userInput === appConfig.adminUser && passInput === appConfig.adminPassword) {
+                alert("Cadastro criado com sucesso! Entrando no painel...");
                 closePasswordModal();
                 unlockAdminMode();
             } else {
-                alert("Utilizador ou senha incorretos!");
+                if (userInput === appConfig.adminUser && passInput === appConfig.adminPassword) {
+                    closePasswordModal();
+                    unlockAdminMode();
+                } else {
+                    alert("Utilizador ou senha incorretos! Se ainda não criou uma conta, clique na aba 'Criar Cadastro'.");
+                }
             }
         }
 
         function unlockAdminMode() {
-            document.getElementById('userWelcomeBadge').innerText = `● Conectado (${appConfig.adminUser})`;
+            document.getElementById('userWelcomeBadge').innerText = `● Conectado como (${appConfig.adminUser})`;
             document.getElementById('changeUsernameInput').value = appConfig.adminUser || '';
             document.getElementById('adminHeader').classList.remove('hidden');
             document.getElementById('editorPanel').classList.remove('hidden');
@@ -559,7 +522,7 @@
 
         function removeImage(target) {
             if (target === 'banner') appConfig.profile.banner = '';
-            if (target === 'avatar') appConfig.profile.avatar = '';
+            if (target === 'avatar') appConfig.profile.avatar = 'https://placehold.co/150x150/1e293b/ffffff?text=Logo';
             saveConfig();
             renderAll();
         }
@@ -626,31 +589,10 @@
         function deleteLink(id) { appConfig.links = appConfig.links.filter(l => l.id !== id); saveConfig(); renderAll(); }
         function updateLinkItem(id, f, val) { const l = appConfig.links.find(x => x.id === id); if(l) { l[f] = val; saveConfig(); renderPreview(); } }
 
-        function openIconModal(id) { currentEditingLinkId = id; document.getElementById('iconModal').classList.remove('hidden'); }
-        function closeIconModal() { currentEditingLinkId = null; document.getElementById('iconModal').classList.add('hidden'); }
-        function selectPresetIcon(icon) {
-            if(!currentEditingLinkId) return;
-            const l = appConfig.links.find(x => x.id === currentEditingLinkId);
-            if(l) { l.icon = icon; saveConfig(); renderAll(); }
-            closeIconModal();
-        }
-
         function renderPreview() {
-            const welcome = document.getElementById('welcomeScreen');
-            const profileView = document.getElementById('publicProfileView');
             const container = document.getElementById('previewContainer');
-
-            // Se ainda não criou conta / configurou nome, mostra a tela de apresentação bonita
-            if (!appConfig.adminPassword || !appConfig.profile.name) {
-                welcome.classList.remove('hidden');
-                profileView.classList.add('hidden');
-                return;
-            }
-
-            welcome.classList.add('hidden');
-            profileView.classList.remove('hidden');
-
             container.className = "flex-1 min-h-screen w-full flex flex-col justify-between items-center p-4 sm:p-8 overflow-y-auto relative transition-all bg-cover bg-center";
+            
             if (appConfig.design.bgType === 'solid') {
                 container.style.backgroundColor = appConfig.design.bgColor;
             } else {
@@ -667,9 +609,9 @@
             avatar.src = appConfig.profile.avatar || 'https://placehold.co/150x150/1e293b/ffffff?text=Logo';
             avatar.className = `w-28 h-28 object-cover shadow-2xl border-2 border-white/20 transition-all ${appConfig.profile.avatarShape || 'rounded-full'}`;
 
-            document.getElementById('previewName').innerText = appConfig.profile.name;
+            document.getElementById('previewName').innerText = appConfig.profile.name || 'Sua Marca / Perfil';
             document.getElementById('previewName').style.color = appConfig.design.titleColor;
-            document.getElementById('previewBio').innerText = appConfig.profile.bio;
+            document.getElementById('previewBio').innerText = appConfig.profile.bio || 'Centralize todos os seus links em um único lugar interativo.';
             document.getElementById('previewBio').style.color = appConfig.design.bioColor;
 
             const linksC = document.getElementById('previewLinks');
@@ -715,13 +657,13 @@
                 appConfig = JSON.parse(evt.target.result);
                 saveConfig();
                 renderAll();
-                alert('Backup restaurado!');
+                alert('Backup restaurado com sucesso!');
             };
             reader.readAsText(file);
         }
 
         function resetToDefault() {
-            if (confirm('Deseja apagar tudo e reiniciar?')) {
+            if (confirm('Deseja apagar as alterações salvas e reiniciar?')) {
                 localStorage.removeItem('link_central_config');
                 location.reload();
             }
