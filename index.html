@@ -96,26 +96,6 @@
       cursor: pointer;
     }
 
-    /* Links Públicos */
-    .link-card {
-      display: block;
-      width: 100%;
-      padding: 14px;
-      margin-bottom: 12px;
-      background-color: #334155;
-      color: var(--text);
-      text-decoration: none;
-      text-align: center;
-      border-radius: 10px;
-      font-weight: 600;
-      transition: transform 0.2s, background-color 0.2s;
-    }
-
-    .link-card:hover {
-      transform: translateY(-2px);
-      background-color: #475569;
-    }
-
     /* Painel Admin */
     .admin-header {
       display: flex;
@@ -194,15 +174,9 @@
       <div id="admin-links-list"></div>
     </div>
 
-    <!-- VISUALIZAÇÃO PÚBLICA DE LINKS -->
-    <div id="public-section" class="hidden">
-      <h2 id="public-user-title">Meus Links</h2>
-      <div id="public-links-container"></div>
-    </div>
-
   </div>
 
-  <!-- SCRIPT COMPLETO DO FIREBASE v10 -->
+  <!-- SCRIPT COMPLETO DO FIREBASE v10 COM CREDENCIAIS CORRETAS -->
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
     import { 
@@ -223,7 +197,7 @@
       where 
     } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-    // Configurações Oficiais do seu projeto 'cental-de-link[span_0](start_span)'[span_0](end_span)
+    // Credenciais oficiais do projeto 'cental-de-link[span_2](start_span)[span_3](start_span)'[span_2](end_span)[span_3](end_span)
     const firebaseConfig = {
       apiKey: "AIzaSyAjl7AX6LI4LdPW0XfeXLiAieyprfuUhAI",
       authDomain: "cental-de-link.firebaseapp.com",
@@ -239,10 +213,9 @@
     const auth = getAuth(app);
     const db = getFirestore(app);
 
-    // Seleção de Elementos da Tela
+    // Seleção de Elementos
     const authSection = document.getElementById('auth-section');
     const adminSection = document.getElementById('admin-section');
-    const publicSection = document.getElementById('public-section');
     
     const authForm = document.getElementById('auth-form');
     const authEmail = document.getElementById('auth-email');
@@ -256,7 +229,6 @@
     const linkTitle = document.getElementById('link-title');
     const linkUrl = document.getElementById('link-url');
     const adminLinksList = document.getElementById('admin-links-list');
-    const publicLinksContainer = document.getElementById('public-links-container');
 
     let isSignUp = false;
 
@@ -274,7 +246,7 @@
       }
     });
 
-    // Submeter formulário de Autenticação
+    // Submeter Login / Cadastro
     authForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const email = authEmail.value;
@@ -295,23 +267,19 @@
     // Logout
     btnLogout.addEventListener('click', () => signOut(auth));
 
-    // Monitorar estado de autenticação do Usuário
+    // Monitorar Sessão
     onAuthStateChanged(auth, (user) => {
       if (user) {
-        // Usuário logado
         authSection.classList.add('hidden');
         adminSection.classList.remove('hidden');
-        publicSection.classList.add('hidden');
         loadAdminLinks(user.uid);
       } else {
-        // Sem usuário logado
         authSection.classList.remove('hidden');
         adminSection.classList.add('hidden');
-        publicSection.classList.add('hidden');
       }
     });
 
-    // Adicionar novo Link ao Firestore (isolado por UID de usuário)
+    // Adicionar Link
     addLinkForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const user = auth.currentUser;
@@ -332,7 +300,7 @@
       }
     });
 
-    // Carregar Links do Painel Admin
+    // Carregar Links do Painel
     async function loadAdminLinks(userId) {
       adminLinksList.innerHTML = 'Carregando...';
       const q = query(collection(db, "links"), where("userId", "==", userId));
