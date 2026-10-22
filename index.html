@@ -66,7 +66,7 @@
                 </div>
                 <div>
                     <h1 class="font-display font-bold text-lg tracking-tight leading-none text-white">Link Central</h1>
-                    <span class="text-xs text-emerald-400 font-medium">● Painel do Administrador Ativo</span>
+                    <span id="userWelcomeBadge" class="text-xs text-emerald-400 font-medium">● Administrador Conectado</span>
                 </div>
             </div>
 
@@ -94,7 +94,7 @@
     <!-- Layout Principal -->
     <main class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
 
-        <!-- PAINEL DE CONFIGURAÇÃO / EDIÇÃO COMPLETO (Escondido na visão pública) -->
+        <!-- PAINEL DE CONFIGURAÇÃO / EDIÇÃO COMPLETO -->
         <aside id="editorPanel" class="w-full lg:w-[500px] xl:w-[550px] border-r border-slate-800 bg-slate-900/80 flex flex-col h-[calc(100vh-61px)] overflow-y-auto hidden">
             
             <!-- Abas de Navegação -->
@@ -110,6 +110,9 @@
                 </button>
                 <button onclick="switchTab('social')" id="tab-social" class="flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition-all">
                     <i data-lucide="share-2" class="w-4 h-4"></i> Sociais
+                </button>
+                <button onclick="switchTab('security')" id="tab-security" class="flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition-all">
+                    <i data-lucide="key" class="w-4 h-4"></i> Senha
                 </button>
             </div>
 
@@ -287,22 +290,42 @@
                     </div>
                 </div>
 
+                <!-- ABA 5: SEGURANÇA E SENHA -->
+                <div id="content-security" class="space-y-5 hidden">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                        <i data-lucide="shield-check" class="w-4 h-4 text-blue-400"></i> Alterar Credenciais do Administrador
+                    </h2>
+                    
+                    <div class="space-y-3 bg-slate-800/50 p-4 rounded-xl border border-slate-700">
+                        <div class="space-y-1">
+                            <label class="text-xs text-slate-300">Seu Nome de Utilizador</label>
+                            <input type="text" id="changeUsernameInput" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white">
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-xs text-slate-300">Nova Senha</label>
+                            <input type="password" id="changePasswordInput" placeholder="Digite uma nova senha" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2.5 text-xs text-white">
+                        </div>
+                        <button onclick="saveNewCredentials()" class="w-full py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs rounded-xl transition-all">
+                            Guardar Novas Credenciais
+                        </button>
+                    </div>
+                </div>
+
             </div>
         </aside>
 
-        <!-- ÁREA PÚBLICA / PERFIL EM ECRÃ INTEIRO (Sem Moldura de Telemóvel) -->
+        <!-- ÁREA PÚBLICA / PERFIL EM ECRÃ INTEIRO -->
         <section id="previewContainer" class="flex-1 min-h-screen w-full flex flex-col justify-between items-center p-4 sm:p-8 overflow-y-auto relative transition-all bg-cover bg-center">
             
             <!-- Conteúdo Renderizado -->
             <div id="previewCard" class="w-full max-w-md mx-auto flex-1 flex flex-col justify-between py-6 relative z-10">
                 
-                <!-- Overlay Suave se Houver Imagem de Fundo -->
                 <div id="previewOverlay" class="absolute inset-0 bg-black/20 -z-10 rounded-2xl"></div>
 
                 <!-- Conteúdo Principal -->
                 <div class="w-full flex flex-col items-center">
                     
-                    <!-- Banner de Cabeçalho -->
+                    <!-- Banner -->
                     <div id="previewBannerContainer" class="w-full rounded-2xl mb-6 h-36 hidden overflow-hidden shadow-lg border border-white/10">
                         <img id="previewBanner" src="" alt="Banner" class="w-full h-full object-cover">
                     </div>
@@ -317,20 +340,16 @@
                     <p id="previewBio" class="text-xs sm:text-sm text-center text-slate-300 max-w-xs mb-6 font-normal leading-relaxed">Sua biografia inspiradora ou slogan curto vai aparecer bem aqui no topo do seu perfil.</p>
 
                     <!-- Container dos Links -->
-                    <div id="previewLinks" class="w-full space-y-3.5 mb-6">
-                        <!-- Links renderizados aqui -->
-                    </div>
+                    <div id="previewLinks" class="w-full space-y-3.5 mb-6"></div>
                 </div>
 
-                <!-- Rodapé do Perfil com Ícones Sociais -->
+                <!-- Rodapé -->
                 <div class="w-full pt-4 border-t border-white/10 flex flex-col items-center gap-3">
-                    <div id="previewSocials" class="flex items-center justify-center gap-3 flex-wrap">
-                        <!-- Ícones sociais aqui -->
-                    </div>
+                    <div id="previewSocials" class="flex items-center justify-center gap-3 flex-wrap"></div>
                     
                     <span class="text-[10px] text-white/40 font-light">Criado com Central de Links</span>
 
-                    <!-- BOTÃO DISCRETO DE ACESSO DO ADMINISTRADOR -->
+                    <!-- BOTÃO DISCRETO DE ACESSO -->
                     <button onclick="openPasswordModal()" class="text-[11px] text-slate-500 hover:text-slate-300 mt-2 transition-all flex items-center gap-1 opacity-60 hover:opacity-100">
                         <i data-lucide="lock" class="w-3 h-3"></i> Área do Administrador
                     </button>
@@ -352,48 +371,57 @@
                 <button onclick="closeIconModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
 
-            <!-- Upload da Imagem Própria -->
             <div class="space-y-2">
-                <label class="text-xs font-medium text-slate-300">Upload de Ícone Próprio (Galeria/Arquivo)</label>
+                <label class="text-xs font-medium text-slate-300">Upload de Ícone Próprio</label>
                 <input type="file" id="linkCustomIconUpload" accept="image/*" class="hidden" onchange="handleLinkCustomIconUpload(event)">
                 <label for="linkCustomIconUpload" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-dashed border-slate-700 bg-slate-800/50 hover:bg-slate-800 cursor-pointer text-xs text-slate-300">
                     <i data-lucide="upload" class="w-4 h-4 text-blue-400"></i> Enviar do Dispositivo
                 </label>
             </div>
 
-            <!-- Ou Escolher da Biblioteca Preset -->
             <div class="space-y-2">
                 <label class="text-xs font-medium text-slate-300">Ou Escolher Ícone Padrão</label>
                 <div class="grid grid-cols-5 gap-2 max-h-48 overflow-y-auto p-1 bg-slate-950/50 rounded-xl border border-slate-800">
-                    <button onclick="selectPresetIcon('globe')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="globe" class="w-5 h-5"></i></button>
-                    <button onclick="selectPresetIcon('shopping-cart')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="shopping-cart" class="w-5 h-5"></i></button>
-                    <button onclick="selectPresetIcon('star')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="star" class="w-5 h-5"></i></button>
-                    <button onclick="selectPresetIcon('zap')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="zap" class="w-5 h-5"></i></button>
-                    <button onclick="selectPresetIcon('play-circle')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="play-circle" class="w-5 h-5"></i></button>
-                    <button onclick="selectPresetIcon('heart')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="heart" class="w-5 h-5"></i></button>
-                    <button onclick="selectPresetIcon('file-text')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="file-text" class="w-5 h-5"></i></button>
-                    <button onclick="selectPresetIcon('phone')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="phone" class="w-5 h-5"></i></button>
-                    <button onclick="selectPresetIcon('map-pin')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="map-pin" class="w-5 h-5"></i></button>
-                    <button onclick="selectPresetIcon('download')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="download" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('globe')" class="p-2.5 hover:bg-blue-600/20 border border-transparent rounded-lg flex justify-center text-slate-300"><i data-lucide="globe" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('shopping-cart')" class="p-2.5 hover:bg-blue-600/20 border border-transparent rounded-lg flex justify-center text-slate-300"><i data-lucide="shopping-cart" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('star')" class="p-2.5 hover:bg-blue-600/20 border border-transparent rounded-lg flex justify-center text-slate-300"><i data-lucide="star" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('zap')" class="p-2.5 hover:bg-blue-600/20 border border-transparent rounded-lg flex justify-center text-slate-300"><i data-lucide="zap" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('play-circle')" class="p-2.5 hover:bg-blue-600/20 border border-transparent rounded-lg flex justify-center text-slate-300"><i data-lucide="play-circle" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('heart')" class="p-2.5 hover:bg-blue-600/20 border border-transparent rounded-lg flex justify-center text-slate-300"><i data-lucide="heart" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('file-text')" class="p-2.5 hover:bg-blue-600/20 border border-transparent rounded-lg flex justify-center text-slate-300"><i data-lucide="file-text" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('phone')" class="p-2.5 hover:bg-blue-600/20 border border-transparent rounded-lg flex justify-center text-slate-300"><i data-lucide="phone" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('map-pin')" class="p-2.5 hover:bg-blue-600/20 border border-transparent rounded-lg flex justify-center text-slate-300"><i data-lucide="map-pin" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('download')" class="p-2.5 hover:bg-blue-600/20 border border-transparent rounded-lg flex justify-center text-slate-300"><i data-lucide="download" class="w-5 h-5"></i></button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Modal de Senha do Administrador -->
+    <!-- Modal Dinâmico de Autenticação / Cadastro Inicial -->
     <div id="passwordModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
         <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-xs w-full text-center space-y-4 shadow-2xl">
             <div class="w-12 h-12 bg-blue-600/20 border border-blue-500/30 text-blue-400 rounded-2xl flex items-center justify-center mx-auto">
                 <i data-lucide="shield-lock" class="w-6 h-6"></i>
             </div>
             <div>
-                <h3 class="text-sm font-bold text-white">Acesso do Administrador</h3>
-                <p class="text-xs text-slate-400 mt-1">Insira a senha do painel para editar o site:</p>
+                <h3 id="authModalTitle" class="text-sm font-bold text-white">Acesso do Administrador</h3>
+                <p id="authModalDesc" class="text-xs text-slate-400 mt-1">Insira suas credenciais para editar o site:</p>
             </div>
-            <input type="password" id="adminPasswordInput" placeholder="Senha (Padrão: 1234)" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-center text-sm text-white focus:outline-none focus:border-blue-500 transition-all">
-            <div class="flex gap-2">
+
+            <div class="space-y-2 text-left">
+                <div>
+                    <label class="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">Utilizador</label>
+                    <input type="text" id="adminUserAuthInput" placeholder="Ex: cristian" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-blue-500 transition-all">
+                </div>
+                <div>
+                    <label class="text-[10px] text-slate-400 uppercase tracking-wider block mb-0.5">Senha</label>
+                    <input type="password" id="adminPasswordInput" placeholder="Sua senha" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-blue-500 transition-all">
+                </div>
+            </div>
+
+            <div class="flex gap-2 pt-2">
                 <button onclick="closePasswordModal()" class="flex-1 py-2 text-xs bg-slate-800 text-slate-300 hover:bg-slate-700 rounded-xl transition-all">Cancelar</button>
-                <button onclick="checkPassword()" class="flex-1 py-2 text-xs bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg transition-all">Entrar</button>
+                <button onclick="handleAuthSubmit()" id="authSubmitBtn" class="flex-1 py-2 text-xs bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg transition-all">Entrar</button>
             </div>
         </div>
     </div>
@@ -402,7 +430,8 @@
     <script>
         // ESTADO GLOBAL DA APLICAÇÃO
         let appConfig = {
-            adminPassword: '1234', // Senha para acesso ao painel
+            adminUser: '', // Vazio por padrão até o primeiro cadastro
+            adminPassword: '', // Vazio por padrão até o primeiro cadastro
             profile: {
                 name: 'Sua Marca / Perfil',
                 bio: 'Centralize todos os seus links em um único lugar interativo e personalizável.',
@@ -459,28 +488,65 @@
             renderAll();
         });
 
-        // AUTENTICAÇÃO E PAINEL ADMINISTRATIVO
+        // AUTENTICAÇÃO DINÂMICA (CADASTRO NO PRIMEIRO ACESSO / LOGIN POSTERIOR)
         function openPasswordModal() {
+            const isFirstAccess = !appConfig.adminPassword;
+            const title = document.getElementById('authModalTitle');
+            const desc = document.getElementById('authModalDesc');
+            const btn = document.getElementById('authSubmitBtn');
+
+            if (isFirstAccess) {
+                title.innerText = "Primeiro Acesso";
+                desc.innerText = "Crie seu Nome de Utilizador e Senha de Administrador:";
+                btn.innerText = "Criar Conta";
+            } else {
+                title.innerText = "Acesso do Administrador";
+                desc.innerText = "Insira suas credenciais para acessar o painel:";
+                btn.innerText = "Entrar";
+            }
+
             document.getElementById('passwordModal').classList.remove('hidden');
-            document.getElementById('adminPasswordInput').focus();
+            document.getElementById('adminUserAuthInput').focus();
         }
 
         function closePasswordModal() {
             document.getElementById('passwordModal').classList.add('hidden');
+            document.getElementById('adminUserAuthInput').value = '';
             document.getElementById('adminPasswordInput').value = '';
         }
 
-        function checkPassword() {
-            const input = document.getElementById('adminPasswordInput').value;
-            if (input === appConfig.adminPassword) {
+        function handleAuthSubmit() {
+            const userInput = document.getElementById('adminUserAuthInput').value.trim();
+            const passInput = document.getElementById('adminPasswordInput').value.trim();
+
+            if (!userInput || !passInput) {
+                alert("Por favor, preencha o utilizador e a senha.");
+                return;
+            }
+
+            // Primeiro Acesso
+            if (!appConfig.adminPassword) {
+                appConfig.adminUser = userInput;
+                appConfig.adminPassword = passInput;
+                saveConfig();
+                alert("Credenciais criadas com sucesso! Entrando no painel...");
+                closePasswordModal();
+                unlockAdminMode();
+                return;
+            }
+
+            // Login Normal
+            if (userInput === appConfig.adminUser && passInput === appConfig.adminPassword) {
                 closePasswordModal();
                 unlockAdminMode();
             } else {
-                alert("Senha incorreta!");
+                alert("Utilizador ou senha incorretos!");
             }
         }
 
         function unlockAdminMode() {
+            document.getElementById('userWelcomeBadge').innerText = `● Conectado como (${appConfig.adminUser})`;
+            document.getElementById('changeUsernameInput').value = appConfig.adminUser || '';
             document.getElementById('adminHeader').classList.remove('hidden');
             document.getElementById('editorPanel').classList.remove('hidden');
         }
@@ -489,12 +555,29 @@
             saveConfig();
             document.getElementById('adminHeader').classList.add('hidden');
             document.getElementById('editorPanel').classList.add('hidden');
-            alert('Alterações salvas no seu navegador!');
+            alert('Alterações salvas!');
+        }
+
+        function saveNewCredentials() {
+            const newUser = document.getElementById('changeUsernameInput').value.trim();
+            const newPass = document.getElementById('changePasswordInput').value.trim();
+
+            if (!newUser || !newPass) {
+                alert("Preencha o utilizador e a nova senha.");
+                return;
+            }
+
+            appConfig.adminUser = newUser;
+            appConfig.adminPassword = newPass;
+            saveConfig();
+            document.getElementById('changePasswordInput').value = '';
+            document.getElementById('userWelcomeBadge').innerText = `● Conectado como (${appConfig.adminUser})`;
+            alert("Credenciais alteradas com sucesso!");
         }
 
         // TROCA DE ABAS DO EDITOR
         function switchTab(tabName) {
-            const tabs = ['profile', 'design', 'links', 'social'];
+            const tabs = ['profile', 'design', 'links', 'social', 'security'];
             tabs.forEach(t => {
                 document.getElementById(`tab-${t}`).className = "flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition-all";
                 document.getElementById(`content-${t}`).classList.add('hidden');
@@ -779,7 +862,6 @@
             const previewBannerContainer = document.getElementById('previewBannerContainer');
             const previewBanner = document.getElementById('previewBanner');
 
-            // 1. Aplicar Fundo ao Container Principal
             previewContainer.className = "flex-1 min-h-screen w-full flex flex-col justify-between items-center p-4 sm:p-8 overflow-y-auto relative transition-all bg-cover bg-center";
             if (appConfig.design.bgType === 'solid') {
                 previewContainer.style.backgroundImage = 'none';
@@ -791,7 +873,6 @@
                 previewContainer.style.backgroundImage = `url('${appConfig.design.bgImage}')`;
             }
 
-            // 2. Banner
             if (appConfig.profile.banner) {
                 previewBanner.src = appConfig.profile.banner;
                 previewBannerContainer.classList.remove('hidden');
@@ -799,7 +880,6 @@
                 previewBannerContainer.classList.add('hidden');
             }
 
-            // 3. Perfil
             previewAvatar.src = appConfig.profile.avatar || 'https://placehold.co/150x150/1e293b/ffffff?text=Logo';
             previewAvatar.className = `w-28 h-28 object-cover shadow-2xl border-2 border-white/20 transition-all ${appConfig.profile.avatarShape}`;
             
@@ -809,7 +889,6 @@
             previewBio.innerText = appConfig.profile.bio || '';
             previewBio.style.color = appConfig.design.bioColor;
 
-            // 4. Renderizar Links
             previewLinks.innerHTML = '';
             appConfig.links.forEach(link => {
                 const btn = document.createElement('a');
@@ -852,7 +931,6 @@
                 previewLinks.appendChild(btn);
             });
 
-            // 5. Renderizar Redes Sociais no Rodapé
             previewSocials.innerHTML = '';
             const socialMap = [
                 { key: 'whatsapp', icon: 'message-circle', color: 'hover:text-emerald-400' },
