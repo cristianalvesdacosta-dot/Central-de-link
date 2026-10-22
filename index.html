@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Link Central - Sua Central de Links</title>
+    <title>Link Tree Builder - Central de Links Personalizada</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Lucide Icons -->
@@ -17,247 +17,462 @@
                     fontFamily: {
                         sans: ['Inter', 'sans-serif'],
                         display: ['Outfit', 'sans-serif'],
+                    },
+                    boxShadow: {
+                        'glass': '0 8px 32px 0 rgba(0, 0, 0, 0.25)',
+                        'glow': '0 0 20px rgba(59, 130, 246, 0.5)',
                     }
                 }
             }
         }
     </script>
     <style>
+        /* Estilos personalizados para Glassmorphism e Scrollbar */
         .glass-panel {
-            background: rgba(255, 255, 255, 0.05);
+            background: rgba(255, 255, 255, 0.07);
             backdrop-filter: blur(16px);
             -webkit-backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.12);
         }
         .glass-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
+        /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
         ::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.2);
+            background: rgba(0, 0, 0, 0.1);
         }
         ::-webkit-scrollbar-thumb {
             background: rgba(255, 255, 255, 0.2);
             border-radius: 9999px;
         }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.4);
+        }
+        /* Preview Phone Mockup Frame */
+        .phone-frame {
+            width: 100%;
+            max-width: 390px;
+            height: 780px;
+            border-radius: 48px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 12px #18181b, 0 0 0 14px #27272a;
+            position: relative;
+            overflow: hidden;
+        }
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 140px;
+            height: 28px;
+            background-color: #18181b;
+            border-bottom-left-radius: 18px;
+            border-bottom-right-radius: 18px;
+            z-index: 50;
+        }
+        /* Mini preview na home (versão compacta) */
+        .home-preview-card {
+            max-width: 320px;
+            border-radius: 24px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px -12px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 font-sans min-h-screen flex flex-col antialiased selection:bg-blue-500 selection:text-white">
 
-    <!-- HEADER DO PAINEL DE ADMINISTRAÇÃO (Oculto na visão pública) -->
-    <header id="adminHeader" class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-40 px-4 py-3 hidden">
-        <div class="max-w-7xl mx-auto flex items-center justify-between">
+    <!-- TELA INICIAL -->
+    <section id="welcomeScreen" class="min-h-screen flex flex-col bg-slate-950 relative overflow-hidden">
+        <div class="absolute inset-0 bg-gradient-to-br from-blue-950 via-slate-950 to-indigo-950 opacity-90"></div>
+        <header class="relative z-10 flex items-center justify-between px-5 py-4 border-b border-white/10">
             <div class="flex items-center gap-3">
-                <div class="p-2 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl shadow-lg">
-                    <i data-lucide="link-2" class="w-6 h-6 text-white"></i>
-                </div>
+                <div class="p-2 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl"><i data-lucide="link-2" class="w-6 h-6 text-white"></i></div>
+                <div><h1 class="font-display font-bold text-lg text-white">Link Central</h1><p class="text-xs text-slate-400">Sua presença digital em um só lugar</p></div>
+            </div>
+            <div class="flex items-center gap-2">
+                <button id="headerEditBtn" onclick="openEditor()" class="hidden px-3 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-sm text-white font-medium">Editar</button>
+                <button onclick="showAuth('login')" class="px-4 py-2 rounded-xl border border-white/20 text-sm text-white hover:bg-white/10">Entrar</button>
+            </div>
+        </header>
+
+        <main class="relative z-10 flex-1 flex items-center justify-center px-5 py-10">
+            <!-- Conteúdo genérico (visitante) -->
+            <div id="welcomeGeneric" class="max-w-4xl w-full grid md:grid-cols-2 gap-10 items-center">
                 <div>
-                    <h1 class="font-display font-bold text-lg tracking-tight text-white leading-none">Painel de Edição</h1>
-                    <span id="adminUserStatus" class="text-xs text-emerald-400 font-medium">● Conectado</span>
+                    <span class="inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-blue-300 bg-blue-400/10 border border-blue-400/20 rounded-full px-3 py-2"><i data-lucide="sparkles" class="w-4 h-4"></i> Simples • Personalizável • Seu</span>
+                    <h2 class="font-display text-4xl sm:text-5xl font-extrabold text-white leading-tight mt-5">Todos os seus links. <span class="text-blue-400">Um só lugar.</span></h2>
+                    <p class="mt-5 text-slate-300 leading-relaxed">Crie uma página personalizada com sua foto, descrição, redes sociais e botões para seus principais links. Personalize as cores, o fundo e os ícones e veja o resultado na hora.</p>
+                    <div class="flex flex-wrap gap-3 mt-8">
+                        <button onclick="showAuth('register')" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-lg shadow-blue-900/40 flex items-center gap-2">Criar minha conta <i data-lucide="arrow-right" class="w-4 h-4"></i></button>
+                        <button onclick="showAuth('login')" class="px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-white font-semibold">Já tenho acesso</button>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-5">Configure uma vez e volte quando quiser para atualizar seus links.</p>
+                </div>
+                <div class="glass-panel rounded-3xl p-5 shadow-glass max-w-sm w-full mx-auto">
+                    <div class="rounded-2xl bg-gradient-to-br from-indigo-950 to-slate-900 p-6 border border-white/10 text-center">
+                        <div class="w-20 h-20 mx-auto rounded-full bg-blue-600/30 border border-blue-300/30 flex items-center justify-center"><i data-lucide="user-round" class="w-10 h-10 text-blue-200"></i></div>
+                        <h3 class="text-white font-bold text-xl mt-4">Sua marca aqui</h3>
+                        <p class="text-slate-400 text-sm mt-1">Seus links, do seu jeito.</p>
+                        <div class="space-y-3 mt-6">
+                            <div class="rounded-xl bg-white/10 border border-white/15 p-3 text-sm text-white flex items-center gap-3"><i data-lucide="globe" class="w-5 h-5 text-blue-300"></i> Meu site</div>
+                            <div class="rounded-xl bg-emerald-600/80 p-3 text-sm text-white flex items-center gap-3"><i data-lucide="message-circle" class="w-5 h-5"></i> Fale comigo</div>
+                            <div class="rounded-xl bg-white/5 border border-white/15 p-3 text-sm text-white flex items-center gap-3"><i data-lucide="instagram" class="w-5 h-5 text-pink-300"></i> Minhas redes sociais</div>
+                        </div>
+                    </div>
+                    <p class="text-center text-xs text-slate-500 mt-4">Prévia ilustrativa da sua página</p>
                 </div>
             </div>
 
+            <!-- Conteúdo personalizado (quando a pessoa já tem sessão e salvou) -->
+            <div id="welcomeUser" class="hidden max-w-5xl w-full grid md:grid-cols-2 gap-10 items-center">
+                <div>
+                    <span class="inline-flex items-center gap-2 text-xs font-semibold tracking-wider uppercase text-emerald-300 bg-emerald-400/10 border border-emerald-400/20 rounded-full px-3 py-2"><i data-lucide="check-circle" class="w-4 h-4"></i> Suas configurações estão salvas</span>
+                    <h2 class="font-display text-3xl sm:text-4xl font-extrabold text-white leading-tight mt-5">Olá, <span id="welcomeUserName" class="text-blue-400">você</span>!</h2>
+                    <p class="mt-4 text-slate-300 leading-relaxed">Sua Central de Links está pronta. Você pode ver a prévia ao lado, continuar editando ou sair da conta.</p>
+                    <div class="flex flex-wrap gap-3 mt-8">
+                        <button onclick="openEditor()" class="px-6 py-3 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-lg shadow-blue-900/40 flex items-center gap-2">
+                            <i data-lucide="pencil" class="w-4 h-4"></i> Continuar editando
+                        </button>
+                        <button onclick="logoutAccount()" class="px-6 py-3 rounded-xl bg-white/5 hover:bg-white/10 border border-white/15 text-white font-semibold flex items-center gap-2">
+                            <i data-lucide="log-out" class="w-4 h-4"></i> Sair da conta
+                        </button>
+                    </div>
+                    <p class="text-xs text-slate-500 mt-5">Para editar em outro dispositivo ou navegador, entre novamente com o mesmo usuário e senha.</p>
+                </div>
+                <div class="flex justify-center">
+                    <div id="homePreviewFrame" class="home-preview-card w-full max-w-[320px] border border-white/10 bg-slate-900">
+                        <!-- Será preenchido dinamicamente com a prévia real da pessoa -->
+                        <div id="homePreviewContent" class="p-5 min-h-[420px] flex flex-col justify-between bg-cover bg-center relative">
+                            <div id="homePreviewOverlay" class="absolute inset-0 bg-black/20 z-0"></div>
+                            <div class="relative z-10 flex flex-col items-center">
+                                <div id="homePreviewBannerWrap" class="w-full -mx-5 -mt-5 mb-4 h-20 hidden overflow-hidden">
+                                    <img id="homePreviewBanner" src="" alt="" class="w-full h-full object-cover">
+                                </div>
+                                <img id="homePreviewAvatar" src="" alt="" class="w-16 h-16 object-cover shadow-xl border-2 border-white/20 rounded-full mb-3">
+                                <h3 id="homePreviewName" class="font-display font-bold text-lg text-center text-white mb-1"></h3>
+                                <p id="homePreviewBio" class="text-[11px] text-center text-slate-300 max-w-[240px] mb-4 leading-relaxed"></p>
+                                <div id="homePreviewLinks" class="w-full space-y-2.5"></div>
+                            </div>
+                            <div class="relative z-10 pt-3 border-t border-white/10 flex flex-col items-center gap-2">
+                                <div id="homePreviewSocials" class="flex items-center justify-center gap-2 flex-wrap"></div>
+                                <span class="text-[9px] text-white/40">Criado com Central de Links</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <footer class="relative z-10 text-center text-xs text-slate-500 px-4 py-5 border-t border-white/10">Link Central • Organize sua presença digital</footer>
+    </section>
+
+    <!-- ACESSO / CADASTRO -->
+    <section id="authScreen" class="hidden min-h-screen bg-slate-950 items-center justify-center px-4 py-10">
+        <div class="w-full max-w-md rounded-3xl border border-slate-800 bg-slate-900 p-7 shadow-2xl">
+            <button onclick="showWelcome()" class="text-sm text-slate-400 hover:text-white flex items-center gap-2 mb-6"><i data-lucide="arrow-left" class="w-4 h-4"></i> Voltar ao início</button>
+            <div class="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-500 flex items-center justify-center mb-4"><i data-lucide="user-round" class="w-6 h-6 text-white"></i></div>
+            <h2 id="authTitle" class="text-2xl font-bold text-white">Criar minha conta</h2>
+            <p id="authDescription" class="text-sm text-slate-400 mt-2">Crie seu acesso para salvar sua Central de Links.</p>
+            <form id="authForm" class="space-y-4 mt-6" onsubmit="submitAuth(event)">
+                <div><label for="authUsername" class="block text-sm text-slate-300 mb-2">Usuário</label><input id="authUsername" required minlength="3" autocomplete="username" class="w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 text-white outline-none focus:border-blue-500" placeholder="Escolha um usuário"></div>
+                <div><label for="authPassword" class="block text-sm text-slate-300 mb-2">Senha</label><input id="authPassword" required minlength="6" type="password" autocomplete="current-password" class="w-full rounded-xl bg-slate-950 border border-slate-700 px-4 py-3 text-white outline-none focus:border-blue-500" placeholder="Mínimo de 6 caracteres"></div>
+                <p id="authMessage" class="hidden text-sm rounded-lg p-3"></p>
+                <button id="authSubmit" type="submit" class="w-full rounded-xl bg-blue-600 hover:bg-blue-500 px-4 py-3 text-white font-semibold">Criar conta</button>
+            </form>
+            <p class="text-xs text-amber-300/80 mt-5">Aviso: esta versão salva os acessos neste navegador. Para contas seguras e sincronizadas entre dispositivos, será necessário conectar um banco de dados e autenticação no servidor.</p>
+            <button id="authSwitch" onclick="switchAuthMode()" class="text-sm text-blue-400 hover:text-blue-300 mt-5">Já tenho conta? Entrar</button>
+        </div>
+    </section>
+
+    <div id="appShell" class="hidden">
+    <!-- Header / Navbar Principal -->
+    <header class="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-40 px-4 py-3">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-gradient-to-tr from-blue-600 to-indigo-500 rounded-xl shadow-lg shadow-blue-500/30">
+                    <i data-lucide="link-2" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <h1 class="font-display font-bold text-lg tracking-tight leading-none text-white">Link Central</h1>
+                    <span class="text-xs text-slate-400">Editor & Criador em Tempo Real</span>
+                </div>
+            </div>
+
+            <!-- Controles do Topo -->
             <div class="flex items-center gap-2">
-                <button onclick="exportConfig()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg transition-all" title="Exportar Backup JSON">
-                    <i data-lucide="download" class="w-4 h-4"></i>
-                    <span class="hidden md:inline">Exportar Backup</span>
+                <button onclick="saveAndReturnHome()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-semibold bg-emerald-600 hover:bg-emerald-500 text-white rounded-lg transition-all">
+                    <i data-lucide="save" class="w-4 h-4"></i><span class="hidden sm:inline">Salvar e voltar</span>
                 </button>
-                <label class="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg transition-all cursor-pointer" title="Restaurar Backup JSON">
+                <button onclick="logoutAccount()" class="flex items-center gap-1 px-2 py-1.5 text-xs text-slate-300 hover:text-white border border-slate-700 rounded-lg" title="Sair da conta"><i data-lucide="log-out" class="w-4 h-4"></i></button>
+                <button id="toggleViewBtn" onclick="toggleFullscreenPreview()" class="flex items-center gap-2 px-3 py-1.5 text-xs sm:text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg transition-all shadow-sm">
+                    <i data-lucide="eye" class="w-4 h-4"></i>
+                    <span class="hidden sm:inline" id="toggleViewText">Modo Tela Cheia</span>
+                </button>
+                <button onclick="exportConfig()" class="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg transition-all" title="Exportar backup em JSON">
+                    <i data-lucide="download" class="w-4 h-4"></i>
+                    <span class="hidden md:inline">Exportar</span>
+                </button>
+                <label class="flex items-center gap-1.5 px-3 py-1.5 text-xs sm:text-sm font-medium bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg transition-all cursor-pointer" title="Importar backup em JSON">
                     <i data-lucide="upload" class="w-4 h-4"></i>
-                    <span class="hidden md:inline">Restaurar Backup</span>
+                    <span class="hidden md:inline">Importar</span>
                     <input type="file" id="importJsonInput" accept=".json" class="hidden" onchange="importConfig(event)">
                 </label>
-                <button onclick="resetToDefault()" class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all" title="Limpar Tudo">
+                <button onclick="resetToDefault()" class="p-2 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all" title="Redefinir para Padrão">
                     <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
-                </button>
-                <button onclick="saveAndExitEditor()" class="px-3.5 py-1.5 text-xs sm:text-sm bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-lg shadow-lg flex items-center gap-1.5 transition-all">
-                    <i data-lucide="check-circle" class="w-4 h-4"></i> Salvar e Exibir Perfil
                 </button>
             </div>
         </div>
     </header>
 
-    <!-- LAYOUT PRINCIPAL (SEM FRAME DE CELULAR) -->
+    <!-- Layout Principal com Sidebar de Controle e Área de Preview -->
     <main class="flex-1 flex flex-col lg:flex-row overflow-hidden relative">
 
-        <!-- PAINEL LATERAL DE EDIÇÃO (Aparece ao fazer login) -->
-        <aside id="editorPanel" class="w-full lg:w-[480px] border-r border-slate-800 bg-slate-900/90 flex flex-col h-[calc(100vh-61px)] overflow-y-auto hidden z-20">
+        <!-- Painel de Configuração / Edição (Esquerda) -->
+        <aside id="editorPanel" class="w-full lg:w-[500px] xl:w-[550px] border-r border-slate-800 bg-slate-900/60 flex flex-col h-[calc(100vh-61px)] overflow-y-auto">
             
-            <div class="flex border-b border-slate-800 bg-slate-900 sticky top-0 z-20">
-                <button onclick="switchTab('profile')" id="tab-profile" class="flex-1 py-3 px-2 text-xs font-semibold text-blue-400 border-b-2 border-blue-500 flex items-center justify-center gap-1">
+            <!-- Abas de Navegação -->
+            <div class="flex border-b border-slate-800 bg-slate-900/90 sticky top-0 z-20">
+                <button onclick="switchTab('profile')" id="tab-profile" class="flex-1 py-3 px-2 text-xs font-semibold text-blue-400 border-b-2 border-blue-500 flex items-center justify-center gap-1.5 transition-all">
                     <i data-lucide="user" class="w-4 h-4"></i> Perfil
                 </button>
-                <button onclick="switchTab('design')" id="tab-design" class="flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1">
+                <button onclick="switchTab('design')" id="tab-design" class="flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition-all">
                     <i data-lucide="palette" class="w-4 h-4"></i> Design
                 </button>
-                <button onclick="switchTab('links')" id="tab-links" class="flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1">
+                <button onclick="switchTab('links')" id="tab-links" class="flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition-all">
                     <i data-lucide="list-plus" class="w-4 h-4"></i> Links
                 </button>
-                <button onclick="switchTab('social')" id="tab-social" class="flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1">
+                <button onclick="switchTab('social')" id="tab-social" class="flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition-all">
                     <i data-lucide="share-2" class="w-4 h-4"></i> Sociais
-                </button>
-                <button onclick="switchTab('security')" id="tab-security" class="flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1">
-                    <i data-lucide="shield" class="w-4 h-4"></i> Senha
                 </button>
             </div>
 
             <div class="p-5 space-y-6 flex-1">
 
-                <!-- PERFIL -->
-                <div id="content-profile" class="space-y-4">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Informações do Perfil</h2>
+                <!-- ABA 1: PERFIL & APRESENTAÇÃO -->
+                <div id="content-profile" class="space-y-5">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                        <i data-lucide="user-check" class="w-4 h-4 text-blue-400"></i> Informações do Perfil
+                    </h2>
 
-                    <div class="space-y-1.5">
-                        <label class="text-xs font-medium text-slate-300">Banner / Capa de Topo</label>
-                        <input type="file" id="bannerUpload" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'banner')">
-                        <div class="flex gap-2">
-                            <label for="bannerUpload" class="flex-1 py-2.5 px-3 rounded-xl border border-dashed border-slate-700 bg-slate-800/50 hover:bg-slate-800 cursor-pointer text-xs text-slate-300 text-center">
-                                Enviar Imagem de Capa
+                    <!-- Banner de Topo -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-medium text-slate-300 flex justify-between">
+                            <span>Banner de Topo (Opcional)</span>
+                            <button onclick="removeImage('banner')" class="text-red-400 hover:underline text-[10px]">Remover</button>
+                        </label>
+                        <div class="flex items-center gap-3">
+                            <input type="file" id="bannerUpload" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'banner')">
+                            <label for="bannerUpload" class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-dashed border-slate-700 bg-slate-800/50 hover:bg-slate-800 hover:border-slate-500 cursor-pointer text-xs text-slate-300 transition-all">
+                                <i data-lucide="image" class="w-4 h-4 text-blue-400"></i> Upload do Banner
                             </label>
-                            <button onclick="removeImage('banner')" class="px-3 py-2 bg-red-500/10 text-red-400 rounded-xl text-xs">Remover</button>
                         </div>
                     </div>
 
-                    <div class="space-y-1.5">
-                        <label class="text-xs font-medium text-slate-300">Foto de Perfil / Logótipo</label>
-                        <input type="file" id="avatarUpload" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'avatar')">
-                        <div class="flex gap-2">
-                            <label for="avatarUpload" class="flex-1 py-2.5 px-3 rounded-xl border border-dashed border-slate-700 bg-slate-800/50 hover:bg-slate-800 cursor-pointer text-xs text-slate-300 text-center">
-                                Enviar Foto / Logo
+                    <!-- Foto de Perfil / Logo -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-medium text-slate-300">Foto de Perfil / Logo</label>
+                        <div class="flex items-center gap-3">
+                            <input type="file" id="avatarUpload" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'avatar')">
+                            <label for="avatarUpload" class="flex-1 flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-dashed border-slate-700 bg-slate-800/50 hover:bg-slate-800 hover:border-slate-500 cursor-pointer text-xs text-slate-300 transition-all">
+                                <i data-lucide="upload-cloud" class="w-4 h-4 text-blue-400"></i> Upload da Imagem / Logo
                             </label>
-                            <button onclick="removeImage('avatar')" class="px-3 py-2 bg-red-500/10 text-red-400 rounded-xl text-xs">Remover</button>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-3 gap-2 pt-1">
-                        <button onclick="setAvatarShape('rounded-full')" class="p-2 border border-slate-700 bg-slate-800 rounded-lg text-xs hover:border-blue-500">Redonda</button>
-                        <button onclick="setAvatarShape('rounded-2xl')" class="p-2 border border-slate-700 bg-slate-800 rounded-lg text-xs hover:border-blue-500">Arredondada</button>
-                        <button onclick="setAvatarShape('rounded-none')" class="p-2 border border-slate-700 bg-slate-800 rounded-lg text-xs hover:border-blue-500">Quadrada</button>
+                    <!-- Formato da Imagem de Perfil -->
+                    <div class="grid grid-cols-3 gap-2">
+                        <button onclick="setAvatarShape('rounded-full')" class="p-2 border border-slate-700 bg-slate-800/60 rounded-lg text-xs hover:border-blue-500 text-slate-300 text-center">Redonda</button>
+                        <button onclick="setAvatarShape('rounded-2xl')" class="p-2 border border-slate-700 bg-slate-800/60 rounded-lg text-xs hover:border-blue-500 text-slate-300 text-center">Arredondada</button>
+                        <button onclick="setAvatarShape('rounded-none')" class="p-2 border border-slate-700 bg-slate-800/60 rounded-lg text-xs hover:border-blue-500 text-slate-300 text-center">Quadrada</button>
                     </div>
 
-                    <div class="space-y-1">
+                    <!-- Nome do Perfil -->
+                    <div class="space-y-1.5">
                         <label class="text-xs font-medium text-slate-300">Nome ou Título</label>
-                        <input type="text" id="inputName" oninput="updateProfileData()" placeholder="Digite seu nome ou marca" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
+                        <input type="text" id="inputName" oninput="updateProfileData()" placeholder="Seu Nome ou Marca" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-blue-500 transition-all">
                     </div>
 
-                    <div class="space-y-1">
+                    <!-- Subtítulo / Bio -->
+                    <div class="space-y-1.5">
                         <label class="text-xs font-medium text-slate-300">Biografia / Descrição</label>
-                        <textarea id="inputBio" oninput="updateProfileData()" rows="3" placeholder="Sua descrição curta..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white resize-none"></textarea>
+                        <textarea id="inputBio" oninput="updateProfileData()" rows="3" placeholder="Sua descrição, slogan ou frase inspiradora..." class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-sm text-slate-100 focus:outline-none focus:border-blue-500 transition-all resize-none"></textarea>
                     </div>
                 </div>
 
-                <!-- DESIGN -->
-                <div id="content-design" class="space-y-4 hidden">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Estilo e Cores</h2>
+                <!-- ABA 2: DESIGN & ESTILO -->
+                <div id="content-design" class="space-y-5 hidden">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                        <i data-lucide="sparkles" class="w-4 h-4 text-blue-400"></i> Personalização do Fundo & Cores
+                    </h2>
 
-                    <div class="grid grid-cols-2 gap-2">
-                        <button onclick="setBgType('solid')" class="p-2 bg-slate-800 border border-slate-700 rounded-xl text-xs hover:border-blue-500">Cor Sólida</button>
-                        <button onclick="setBgType('gradient')" class="p-2 bg-slate-800 border border-slate-700 rounded-xl text-xs hover:border-blue-500">Gradiente</button>
+                    <!-- Tipo de Fundo -->
+                    <div class="space-y-2">
+                        <label class="text-xs font-medium text-slate-300">Estilo de Fundo</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <button onclick="setBgType('solid')" class="p-2 bg-slate-800 border border-slate-700 rounded-xl text-xs hover:border-blue-500">Cor Sólida</button>
+                            <button onclick="setBgType('gradient')" class="p-2 bg-slate-800 border border-slate-700 rounded-xl text-xs hover:border-blue-500">Gradiente</button>
+                            <button onclick="setBgType('image')" class="p-2 bg-slate-800 border border-slate-700 rounded-xl text-xs hover:border-blue-500 col-span-2">Imagem de Fundo (Galeria)</button>
+                        </div>
                     </div>
 
-                    <div id="bgSolidConfig" class="space-y-1">
-                        <label class="text-xs text-slate-300">Cor do Fundo</label>
-                        <input type="color" id="bgColorInput" onchange="updateDesign()" class="w-full h-9 rounded-lg border-0 bg-transparent cursor-pointer">
+                    <!-- Config do Fundo por Opção -->
+                    <div id="bgSolidConfig" class="space-y-2">
+                        <label class="text-xs font-medium text-slate-300">Cor Principal de Fundo</label>
+                        <div class="flex items-center gap-3">
+                            <input type="color" id="bgColorInput" onchange="updateDesign()" class="w-10 h-10 rounded-lg border-0 bg-transparent cursor-pointer">
+                            <input type="text" id="bgColorText" oninput="syncColorInput('bgColorInput', this.value)" class="flex-1 bg-slate-800 border border-slate-700 rounded-xl p-2 text-xs uppercase">
+                        </div>
                     </div>
 
-                    <div id="bgGradientConfig" class="space-y-2 hidden">
-                        <label class="text-xs text-slate-300">Opções de Gradientes</label>
+                    <div id="bgGradientConfig" class="space-y-3 hidden">
+                        <label class="text-xs font-medium text-slate-300">Gradientes Pré-definidos</label>
                         <div class="grid grid-cols-4 gap-2">
-                            <button onclick="setGradientPreset('from-slate-900 via-purple-900 to-slate-900')" class="h-9 rounded-lg bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 border border-slate-700"></button>
-                            <button onclick="setGradientPreset('from-blue-900 via-indigo-900 to-slate-950')" class="h-9 rounded-lg bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-950 border border-slate-700"></button>
-                            <button onclick="setGradientPreset('from-rose-900 via-pink-800 to-purple-950')" class="h-9 rounded-lg bg-gradient-to-r from-rose-900 via-pink-800 to-purple-950 border border-slate-700"></button>
-                            <button onclick="setGradientPreset('from-emerald-900 via-teal-900 to-slate-950')" class="h-9 rounded-lg bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-950 border border-slate-700"></button>
+                            <button onclick="setGradientPreset('from-slate-900 via-purple-900 to-slate-900')" class="h-10 rounded-lg bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 border border-slate-700"></button>
+                            <button onclick="setGradientPreset('from-blue-900 via-indigo-900 to-slate-950')" class="h-10 rounded-lg bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-950 border border-slate-700"></button>
+                            <button onclick="setGradientPreset('from-rose-900 via-pink-800 to-purple-950')" class="h-10 rounded-lg bg-gradient-to-r from-rose-900 via-pink-800 to-purple-950 border border-slate-700"></button>
+                            <button onclick="setGradientPreset('from-emerald-900 via-teal-900 to-slate-950')" class="h-10 rounded-lg bg-gradient-to-r from-emerald-900 via-teal-900 to-slate-950 border border-slate-700"></button>
                         </div>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2 pt-2 border-t border-slate-800">
-                        <div>
-                            <label class="text-[11px] text-slate-400 block">Cor do Nome</label>
-                            <input type="color" id="titleColorInput" onchange="updateDesign()" class="w-full h-8 rounded border-0 bg-transparent cursor-pointer">
+                    <div id="bgImageConfig" class="space-y-2 hidden">
+                        <label class="text-xs font-medium text-slate-300">Imagem de Fundo Personalizada</label>
+                        <input type="file" id="bgImageUpload" accept="image/*" class="hidden" onchange="handleImageUpload(event, 'bg')">
+                        <label for="bgImageUpload" class="flex items-center justify-center gap-2 py-3 px-4 rounded-xl border border-dashed border-slate-700 bg-slate-800/50 hover:bg-slate-800 cursor-pointer text-xs text-slate-300">
+                            <i data-lucide="image" class="w-4 h-4 text-blue-400"></i> Escolher Imagem da Galeria
+                        </label>
+                    </div>
+
+                    <!-- Cores dos Textos -->
+                    <div class="space-y-3 border-t border-slate-800 pt-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Cores dos Textos</h3>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="text-[11px] text-slate-400 block mb-1">Título / Nome</label>
+                                <input type="color" id="titleColorInput" onchange="updateDesign()" class="w-full h-8 rounded border-0 bg-transparent cursor-pointer">
+                            </div>
+                            <div>
+                                <label class="text-[11px] text-slate-400 block mb-1">Biografia</label>
+                                <input type="color" id="bioColorInput" onchange="updateDesign()" class="w-full h-8 rounded border-0 bg-transparent cursor-pointer">
+                            </div>
                         </div>
-                        <div>
-                            <label class="text-[11px] text-slate-400 block">Cor da Bio</label>
-                            <input type="color" id="bioColorInput" onchange="updateDesign()" class="w-full h-8 rounded border-0 bg-transparent cursor-pointer">
+                    </div>
+
+                    <!-- Estilo Padrão dos Botões de Links -->
+                    <div class="space-y-3 border-t border-slate-800 pt-4">
+                        <h3 class="text-xs font-bold uppercase tracking-wider text-slate-400">Estilo Geral dos Botões</h3>
+                        <div class="grid grid-cols-3 gap-2">
+                            <button onclick="setButtonStyle('glass')" class="p-2 border border-slate-700 bg-white/10 backdrop-blur rounded-xl text-xs hover:border-blue-500">Efeito Glass</button>
+                            <button onclick="setButtonStyle('solid')" class="p-2 border border-slate-700 bg-blue-600 rounded-xl text-xs hover:border-blue-500">Sólido</button>
+                            <button onclick="setButtonStyle('outline')" class="p-2 border border-blue-500 rounded-xl text-xs hover:bg-blue-500/20">Contorno</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- LINKS -->
-                <div id="content-links" class="space-y-4 hidden">
+                <!-- ABA 3: GERENCIADOR DE LINKS -->
+                <div id="content-links" class="space-y-5 hidden">
                     <div class="flex items-center justify-between">
-                        <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Gerenciar Links</h2>
-                        <button onclick="addNewLink()" class="px-2.5 py-1 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-lg flex items-center gap-1">
-                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Novo Link
+                        <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                            <i data-lucide="link" class="w-4 h-4 text-blue-400"></i> Meus Links
+                        </h2>
+                        <button onclick="addNewLink()" class="px-3 py-1.5 text-xs bg-blue-600 hover:bg-blue-500 text-white font-medium rounded-lg flex items-center gap-1 shadow-lg shadow-blue-600/30 transition-all">
+                            <i data-lucide="plus" class="w-3.5 h-3.5"></i> Adicionar Link
                         </button>
                     </div>
-                    <div id="linksList" class="space-y-2.5"></div>
+
+                    <!-- Lista de Links Cadastrados -->
+                    <div id="linksList" class="space-y-3">
+                        <!-- Gerado Dinamicamente -->
+                    </div>
                 </div>
 
-                <!-- SOCIAIS -->
-                <div id="content-social" class="space-y-3 hidden">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Redes Sociais</h2>
-                    <input type="text" id="socialWhatsapp" oninput="updateSocials()" placeholder="Link do WhatsApp (https://wa.me/...)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
-                    <input type="text" id="socialInstagram" oninput="updateSocials()" placeholder="Link do Instagram (https://instagram.com/...)" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
-                    <input type="text" id="socialTelegram" oninput="updateSocials()" placeholder="Link do Telegram" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
-                </div>
+                <!-- ABA 4: REDES SOCIAIS -->
+                <div id="content-social" class="space-y-5 hidden">
+                    <h2 class="text-sm font-bold uppercase tracking-wider text-slate-400 flex items-center gap-2">
+                        <i data-lucide="share-2" class="w-4 h-4 text-blue-400"></i> Ícones Sociais no Rodapé
+                    </h2>
+                    <p class="text-xs text-slate-400">Preencha apenas os links que deseja exibir no perfil.</p>
 
-                <!-- SEGURANÇA -->
-                <div id="content-security" class="space-y-3 hidden">
-                    <h2 class="text-xs font-bold uppercase tracking-wider text-slate-400">Alterar Credenciais</h2>
-                    <input type="text" id="changeUsernameInput" placeholder="Nome de Utilizador" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
-                    <input type="password" id="changePasswordInput" placeholder="Nova Senha" class="w-full bg-slate-800 border border-slate-700 rounded-xl p-2.5 text-xs text-white">
-                    <button onclick="saveNewCredentials()" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold rounded-xl">Guardar Alterações</button>
+                    <div class="space-y-3">
+                        <div class="flex items-center gap-2 bg-slate-800/60 p-2 rounded-xl border border-slate-700">
+                            <i data-lucide="message-circle" class="w-5 h-5 text-emerald-400 shrink-0"></i>
+                            <input type="text" id="socialWhatsapp" oninput="updateSocials()" placeholder="WhatsApp (ex: https://wa.me/55...)" class="w-full bg-transparent text-xs focus:outline-none">
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-800/60 p-2 rounded-xl border border-slate-700">
+                            <i data-lucide="instagram" class="w-5 h-5 text-pink-400 shrink-0"></i>
+                            <input type="text" id="socialInstagram" oninput="updateSocials()" placeholder="Instagram (ex: https://instagram.com/seuuser)" class="w-full bg-transparent text-xs focus:outline-none">
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-800/60 p-2 rounded-xl border border-slate-700">
+                            <i data-lucide="send" class="w-5 h-5 text-sky-400 shrink-0"></i>
+                            <input type="text" id="socialTelegram" oninput="updateSocials()" placeholder="Telegram (ex: https://t.me/seuuser)" class="w-full bg-transparent text-xs focus:outline-none">
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-800/60 p-2 rounded-xl border border-slate-700">
+                            <i data-lucide="youtube" class="w-5 h-5 text-red-500 shrink-0"></i>
+                            <input type="text" id="socialYoutube" oninput="updateSocials()" placeholder="YouTube (ex: https://youtube.com/@seucanal)" class="w-full bg-transparent text-xs focus:outline-none">
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-800/60 p-2 rounded-xl border border-slate-700">
+                            <i data-lucide="facebook" class="w-5 h-5 text-blue-500 shrink-0"></i>
+                            <input type="text" id="socialFacebook" oninput="updateSocials()" placeholder="Facebook" class="w-full bg-transparent text-xs focus:outline-none">
+                        </div>
+                        <div class="flex items-center gap-2 bg-slate-800/60 p-2 rounded-xl border border-slate-700">
+                            <i data-lucide="mail" class="w-5 h-5 text-amber-400 shrink-0"></i>
+                            <input type="text" id="socialEmail" oninput="updateSocials()" placeholder="E-mail (ex: mailto:seuemail@dominio.com)" class="w-full bg-transparent text-xs focus:outline-none">
+                        </div>
+                    </div>
                 </div>
 
             </div>
         </aside>
 
-        <!-- ÁREA PÚBLICA / EXIBIÇÃO EM TELA CHEIA (SEM MOLDURA DE CELULAR) -->
-        <section id="previewContainer" class="flex-1 w-full min-h-screen flex flex-col justify-between items-center p-4 sm:p-8 overflow-y-auto relative bg-cover bg-center transition-all">
+        <!-- Área de Preview / Visualização da Central de Links (Direita) -->
+        <section id="previewContainer" class="flex-1 bg-slate-950 flex items-center justify-center p-4 lg:p-8 overflow-y-auto min-h-[calc(100vh-61px)]">
             
-            <div id="previewCard" class="w-full max-w-md mx-auto my-auto flex-1 flex flex-col justify-between py-6 relative z-10">
-                <div id="previewOverlay" class="absolute inset-0 bg-black/20 -z-10 rounded-2xl"></div>
-
-                <!-- Conteúdo do Perfil -->
-                <div class="w-full flex flex-col items-center">
+            <!-- Smartphone Mockup Frame -->
+            <div id="phoneFrame" class="phone-frame transition-all duration-300 flex flex-col">
+                <div class="phone-notch"></div>
+                
+                <!-- Conteúdo do Preview Renderizado -->
+                <div id="previewCard" class="w-full h-full flex-1 overflow-y-auto flex flex-col justify-between p-6 relative transition-all bg-cover bg-center">
                     
-                    <!-- Banner -->
-                    <div id="previewBannerContainer" class="w-full rounded-2xl mb-6 h-36 hidden overflow-hidden border border-white/10 shadow-lg">
-                        <img id="previewBanner" src="" alt="Banner" class="w-full h-full object-cover">
-                    </div>
+                    <!-- Overlay Suave se Houver Imagem de Fundo -->
+                    <div id="previewOverlay" class="absolute inset-0 bg-black/20 z-0"></div>
 
-                    <!-- Avatar / Placeholder Vazio -->
-                    <div class="relative mb-4">
-                        <div id="emptyAvatarPlaceholder" class="w-24 h-24 bg-slate-800/80 border-2 border-dashed border-slate-600 rounded-full flex flex-col items-center justify-center text-slate-400">
-                            <i data-lucide="user" class="w-8 h-8 opacity-60"></i>
-                            <span class="text-[9px] mt-1">Sua Logo</span>
+                    <!-- Conteúdo Principal -->
+                    <div class="relative z-10 w-full flex flex-col items-center">
+                        
+                        <!-- Banner de Cabeçalho -->
+                        <div id="previewBannerContainer" class="w-full -mx-6 -mt-6 mb-6 h-32 hidden overflow-hidden bg-slate-800/50">
+                            <img id="previewBanner" src="" alt="Banner" class="w-full h-full object-cover">
                         </div>
-                        <img id="previewAvatar" src="" alt="Perfil" class="w-24 h-24 object-cover shadow-2xl border-2 border-white/20 rounded-full transition-all hidden">
+
+                        <!-- Foto de Perfil -->
+                        <div class="relative mb-4">
+                            <img id="previewAvatar" src="https://placehold.co/150x150/1e293b/ffffff?text=Logo" alt="Perfil" class="w-24 h-24 object-cover shadow-2xl border-2 border-white/20 rounded-full transition-all">
+                        </div>
+
+                        <!-- Nome e Biografia -->
+                        <h2 id="previewName" class="font-display font-bold text-xl text-center text-white mb-1 tracking-tight">Seu Nome Aqui</h2>
+                        <p id="previewBio" class="text-xs text-center text-slate-300 max-w-xs mb-6 font-normal leading-relaxed">Sua biografia inspiradora ou slogan curto vai aparecer bem aqui no topo do seu perfil.</p>
+
+                        <!-- Container dos Links -->
+                        <div id="previewLinks" class="w-full space-y-3.5 mb-6">
+                            <!-- Links renderizados aqui -->
+                        </div>
                     </div>
 
-                    <!-- Nome e Bio -->
-                    <h2 id="previewName" class="font-display font-bold text-2xl text-center text-white mb-1 tracking-tight">Sua Marca / Perfil</h2>
-                    <p id="previewBio" class="text-xs sm:text-sm text-center text-slate-300 max-w-xs mb-6 font-normal leading-relaxed">Esta é uma apresentação. Clique em "Área do Administrador" no rodapé para criar o seu perfil personalizado.</p>
+                    <!-- Rodapé com Redes Sociais -->
+                    <div class="relative z-10 w-full pt-4 border-t border-white/10 flex flex-col items-center gap-3">
+                        <div id="previewSocials" class="flex items-center justify-center gap-3 flex-wrap">
+                            <!-- Ícones sociais aqui -->
+                        </div>
+                        <span class="text-[10px] text-white/40 font-light">Criado com Central de Links</span>
+                    </div>
 
-                    <!-- Lista de Links -->
-                    <div id="previewLinks" class="w-full space-y-3 mb-6"></div>
-                </div>
-
-                <!-- Rodapé -->
-                <div class="w-full pt-4 border-t border-white/10 flex flex-col items-center gap-3">
-                    <div id="previewSocials" class="flex items-center justify-center gap-3 flex-wrap"></div>
-                    <span class="text-[10px] text-white/40 font-light">Criado com Central de Links</span>
-
-                    <!-- BOTÃO DO ADMINISTRADOR -->
-                    <button onclick="openAuthModal()" class="text-[11px] text-slate-400 hover:text-white mt-1 transition-all flex items-center gap-1.5 opacity-80 hover:opacity-100">
-                        <i data-lucide="lock" class="w-3.5 h-3.5"></i> Área do Administrador
-                    </button>
                 </div>
             </div>
 
@@ -265,178 +480,239 @@
 
     </main>
 
-    <!-- MODAL DE ENTRAR / CRIAR CADASTRO -->
-    <div id="authModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
-        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 max-w-xs w-full text-center space-y-4 shadow-2xl">
-            <div class="w-12 h-12 bg-blue-600/20 border border-blue-500/30 text-blue-400 rounded-2xl flex items-center justify-center mx-auto">
-                <i data-lucide="shield-lock" class="w-6 h-6"></i>
+    <!-- Modal para Editar Ícone do Link / Upload Personalizado -->
+    <div id="iconModal" class="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-slate-900 border border-slate-800 rounded-2xl p-5 max-w-md w-full space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
+                <h3 class="text-sm font-bold text-white flex items-center gap-2">
+                    <i data-lucide="image" class="w-4 h-4 text-blue-400"></i> Escolher Ícone do Link
+                </h3>
+                <button onclick="closeIconModal()" class="text-slate-400 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
             </div>
 
-            <div class="flex border-b border-slate-800 pb-2">
-                <button id="authTabLogin" onclick="setAuthMode('login')" class="flex-1 text-xs font-bold text-blue-400 border-b-2 border-blue-500 pb-1">Entrar</button>
-                <button id="authTabRegister" onclick="setAuthMode('register')" class="flex-1 text-xs font-bold text-slate-400 pb-1">Criar Cadastro</button>
+            <!-- Upload da Imagem Própria -->
+            <div class="space-y-2">
+                <label class="text-xs font-medium text-slate-300">Upload de Ícone Próprio (Galeria/Arquivo)</label>
+                <input type="file" id="linkCustomIconUpload" accept="image/*" class="hidden" onchange="handleLinkCustomIconUpload(event)">
+                <label for="linkCustomIconUpload" class="flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl border border-dashed border-slate-700 bg-slate-800/50 hover:bg-slate-800 cursor-pointer text-xs text-slate-300">
+                    <i data-lucide="upload" class="w-4 h-4 text-blue-400"></i> Enviar do Dispositivo
+                </label>
             </div>
 
-            <p id="authModalDesc" class="text-xs text-slate-400">Insira suas credenciais:</p>
-
-            <div class="space-y-2 text-left">
-                <div>
-                    <label class="text-[10px] text-slate-400 uppercase block mb-0.5">Utilizador</label>
-                    <input type="text" id="adminUserAuthInput" placeholder="Ex: meuusuario" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
+            <!-- Ou Escolher da Biblioteca Preset -->
+            <div class="space-y-2">
+                <label class="text-xs font-medium text-slate-300">Ou Escolher Ícone Padrão</label>
+                <div class="grid grid-cols-5 gap-2 max-h-48 overflow-y-auto p-1 bg-slate-950/50 rounded-xl border border-slate-800">
+                    <button onclick="selectPresetIcon('globe')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="globe" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('shopping-cart')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="shopping-cart" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('star')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="star" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('zap')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="zap" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('play-circle')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="play-circle" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('heart')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="heart" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('file-text')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="file-text" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('phone')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="phone" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('map-pin')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="map-pin" class="w-5 h-5"></i></button>
+                    <button onclick="selectPresetIcon('download')" class="p-2.5 hover:bg-blue-600/20 hover:border-blue-500 border border-transparent rounded-lg flex items-center justify-center text-slate-300"><i data-lucide="download" class="w-5 h-5"></i></button>
                 </div>
-                <div>
-                    <label class="text-[10px] text-slate-400 uppercase block mb-0.5">Senha</label>
-                    <input type="password" id="adminPasswordInput" placeholder="Sua senha" class="w-full bg-slate-950 border border-slate-800 rounded-xl p-2.5 text-xs text-white focus:outline-none focus:border-blue-500">
-                </div>
-            </div>
-
-            <div class="flex gap-2 pt-2">
-                <button onclick="closeAuthModal()" class="flex-1 py-2 text-xs bg-slate-800 text-slate-300 hover:bg-slate-700 rounded-xl">Cancelar</button>
-                <button onclick="handleAuthSubmit()" id="authSubmitBtn" class="flex-1 py-2 text-xs bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg">Entrar</button>
             </div>
         </div>
     </div>
 
-    <!-- SCRIPT DE LÓGICA -->
+</div>
+
+    <!-- Script de Lógica do Aplicativo -->
     <script>
+        // ESTADO GLOBAL DA APLICAÇÃO
         let appConfig = {
-            adminUser: '',
-            adminPassword: '',
             profile: {
-                name: '',
-                bio: '',
-                avatar: '',
+                name: 'Sua Marca / Perfil',
+                bio: 'Centralize todos os seus links em um único lugar interativo e personalizável.',
+                avatar: 'https://placehold.co/150x150/3b82f6/ffffff?text=Logo',
                 avatarShape: 'rounded-full',
                 banner: ''
             },
             design: {
-                bgType: 'gradient',
+                bgType: 'gradient', // 'solid', 'gradient', 'image'
                 bgColor: '#0f172a',
                 bgGradient: 'from-slate-900 via-indigo-950 to-slate-900',
+                bgImage: '',
                 titleColor: '#ffffff',
                 bioColor: '#cbd5e1',
-                buttonStyle: 'glass'
+                buttonStyle: 'glass' // 'glass', 'solid', 'outline'
             },
-            links: [],
-            socials: { whatsapp: '', instagram: '', telegram: '' }
+            links: [
+                {
+                    id: 1,
+                    title: 'Nosso Website Oficial',
+                    subtitle: 'Conheça nossos produtos e serviços',
+                    url: 'https://google.com',
+                    iconType: 'preset', // 'preset' ou 'custom'
+                    icon: 'globe',
+                    bgColor: '#2563eb',
+                    textColor: '#ffffff'
+                },
+                {
+                    id: 2,
+                    title: 'Falar no WhatsApp Direct',
+                    subtitle: 'Atendimento Rápido e Orçamentos',
+                    url: 'https://wa.me/',
+                    iconType: 'preset',
+                    icon: 'phone',
+                    bgColor: '#059669',
+                    textColor: '#ffffff'
+                }
+            ],
+            socials: {
+                whatsapp: '',
+                instagram: '',
+                telegram: '',
+                youtube: '',
+                facebook: '',
+                email: ''
+            }
         };
 
-        let activeAuthMode = 'login';
+        let currentEditingLinkId = null;
+        let isFullscreen = false;
+        let activeUsername = null;
+        let authMode = 'register';
 
-        window.addEventListener('DOMContentLoaded', () => {
-            loadConfigFromLocalStorage();
-            renderAll();
-        });
+        // ACESSO LOCAL (protótipo: os dados ficam neste navegador)
+        function getUsers() {
+            try { return JSON.parse(localStorage.getItem('link_central_users') || '{}'); }
+            catch (e) { return {}; }
+        }
+        function showWelcome() {
+            document.getElementById('welcomeScreen').classList.remove('hidden');
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('authScreen').classList.remove('flex');
+            document.getElementById('appShell').classList.add('hidden');
 
-        function openAuthModal() {
-            document.getElementById('authModal').classList.remove('hidden');
-            if (!appConfig.adminPassword) {
-                setAuthMode('register');
+            const generic = document.getElementById('welcomeGeneric');
+            const userHome = document.getElementById('welcomeUser');
+            const headerEdit = document.getElementById('headerEditBtn');
+
+            if (activeUsername) {
+                // Carrega as configs da pessoa e mostra a home personalizada
+                loadConfigFromLocalStorage();
+                generic.classList.add('hidden');
+                userHome.classList.remove('hidden');
+                headerEdit.classList.remove('hidden');
+                document.getElementById('welcomeUserName').textContent = activeUsername;
+                renderHomePreview();
             } else {
-                setAuthMode('login');
+                generic.classList.remove('hidden');
+                userHome.classList.add('hidden');
+                headerEdit.classList.add('hidden');
             }
+            lucide.createIcons();
         }
-
-        function closeAuthModal() {
-            document.getElementById('authModal').classList.add('hidden');
-            document.getElementById('adminUserAuthInput').value = '';
-            document.getElementById('adminPasswordInput').value = '';
+        function showAuth(mode) {
+            authMode = mode;
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('appShell').classList.add('hidden');
+            const screen = document.getElementById('authScreen');
+            screen.classList.remove('hidden');
+            screen.classList.add('flex');
+            document.getElementById('authTitle').innerText = mode === 'register' ? 'Criar minha conta' : 'Entrar na minha conta';
+            document.getElementById('authDescription').innerText = mode === 'register' ? 'Crie seu acesso para salvar sua Central de Links.' : 'Entre com seu usuário e senha para continuar.';
+            document.getElementById('authSubmit').innerText = mode === 'register' ? 'Criar conta' : 'Entrar';
+            document.getElementById('authSwitch').innerText = mode === 'register' ? 'Já tenho conta? Entrar' : 'Ainda não tenho conta? Criar conta';
+            document.getElementById('authPassword').value = '';
+            const msg = document.getElementById('authMessage');
+            msg.classList.add('hidden'); msg.textContent = '';
+            lucide.createIcons();
         }
-
-        function setAuthMode(mode) {
-            activeAuthMode = mode;
-            const tabLogin = document.getElementById('authTabLogin');
-            const tabReg = document.getElementById('authTabRegister');
-            const desc = document.getElementById('authModalDesc');
-            const btn = document.getElementById('authSubmitBtn');
-
-            if (mode === 'register') {
-                tabReg.className = "flex-1 text-xs font-bold text-blue-400 border-b-2 border-blue-500 pb-1";
-                tabLogin.className = "flex-1 text-xs font-bold text-slate-400 pb-1";
-                desc.innerText = "Crie seu Nome de Utilizador e Senha:";
-                btn.innerText = "Criar Cadastro";
-            } else {
-                tabLogin.className = "flex-1 text-xs font-bold text-blue-400 border-b-2 border-blue-500 pb-1";
-                tabReg.className = "flex-1 text-xs font-bold text-slate-400 pb-1";
-                desc.innerText = "Insira suas credenciais para abrir o painel:";
-                btn.innerText = "Entrar";
-            }
-        }
-
-        function handleAuthSubmit() {
-            const userInput = document.getElementById('adminUserAuthInput').value.trim();
-            const passInput = document.getElementById('adminPasswordInput').value.trim();
-
-            if (!userInput || !passInput) {
-                alert("Por favor, preencha o utilizador e a senha.");
-                return;
-            }
-
-            if (activeAuthMode === 'register') {
-                appConfig.adminUser = userInput;
-                appConfig.adminPassword = passInput;
+        function switchAuthMode() { showAuth(authMode === 'register' ? 'login' : 'register'); }
+        function submitAuth(event) {
+            event.preventDefault();
+            const username = document.getElementById('authUsername').value.trim().toLowerCase();
+            const password = document.getElementById('authPassword').value;
+            const users = getUsers();
+            const msg = document.getElementById('authMessage');
+            msg.className = 'text-sm rounded-lg p-3';
+            if (authMode === 'register') {
+                if (users[username]) {
+                    msg.textContent = 'Esse usuário já existe neste navegador. Escolha outro ou entre na conta.';
+                    msg.classList.add('bg-red-500/10','text-red-300'); return;
+                }
+                users[username] = { password: password };
+                localStorage.setItem('link_central_users', JSON.stringify(users));
+                activeUsername = username;
+                appConfig = JSON.parse(JSON.stringify(defaultAppConfig));
                 saveConfig();
-                alert("Cadastro criado com sucesso! Abrindo o painel de edição...");
-                closeAuthModal();
                 openEditor();
             } else {
-                if (userInput === appConfig.adminUser && passInput === appConfig.adminPassword) {
-                    closeAuthModal();
-                    openEditor();
-                } else {
-                    alert("Utilizador ou senha incorretos! Clique na aba 'Criar Cadastro' se for seu primeiro acesso.");
+                if (!users[username] || users[username].password !== password) {
+                    msg.textContent = 'Usuário ou senha incorretos.';
+                    msg.classList.add('bg-red-500/10','text-red-300'); return;
+                }
+                activeUsername = username;
+                loadConfigFromLocalStorage();
+                openEditor();
+            }
+        }
+        function openEditor() {
+            document.getElementById('welcomeScreen').classList.add('hidden');
+            document.getElementById('authScreen').classList.add('hidden');
+            document.getElementById('authScreen').classList.remove('flex');
+            document.getElementById('appShell').classList.remove('hidden');
+            loadConfigFromLocalStorage();
+            renderAll();
+        }
+        function saveAndReturnHome() {
+            saveConfig();
+            showWelcome();
+            // Pequeno feedback visual (opcional)
+            // alert removido para ficar mais fluido — a home já mostra a prévia
+        }
+        function logoutAccount() {
+            saveConfig();
+            activeUsername = null;
+            showWelcome();
+        }
+        const defaultAppConfig = JSON.parse(JSON.stringify(appConfig));
+
+        // INICIALIZAÇÃO
+        window.addEventListener('DOMContentLoaded', () => {
+            showWelcome();
+        });
+
+        // TROCA DE ABAS
+        function switchTab(tabName) {
+            const tabs = ['profile', 'design', 'links', 'social'];
+            tabs.forEach(t => {
+                document.getElementById(`tab-${t}`).className = "flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1.5 transition-all";
+                document.getElementById(`content-${t}`).classList.add('hidden');
+            });
+
+            document.getElementById(`tab-${tabName}`).className = "flex-1 py-3 px-2 text-xs font-semibold text-blue-400 border-b-2 border-blue-500 flex items-center justify-center gap-1.5 transition-all";
+            document.getElementById(`content-${tabName}`).classList.remove('hidden');
+        }
+
+        // CARREGAR E SALVAR LOCALSTORAGE
+        function saveConfig() {
+            try {
+                if (!activeUsername) return;
+                localStorage.setItem('link_central_config_' + activeUsername, JSON.stringify(appConfig));
+            } catch (e) {
+                console.warn('Limite de armazenamento excedido para LocalStorage com imagens grandes.', e);
+            }
+        }
+
+        function loadConfigFromLocalStorage() {
+            if (!activeUsername) return;
+            const saved = localStorage.getItem('link_central_config_' + activeUsername);
+            if (saved) {
+                try {
+                    appConfig = JSON.parse(saved);
+                } catch(e) {
+                    console.error("Erro ao carregar do LocalStorage", e);
                 }
             }
         }
 
-        function openEditor() {
-            document.getElementById('adminHeader').classList.remove('hidden');
-            document.getElementById('editorPanel').classList.remove('hidden');
-            document.getElementById('adminUserStatus').innerText = `● Conectado (${appConfig.adminUser})`;
-            document.getElementById('changeUsernameInput').value = appConfig.adminUser;
-        }
-
-        function saveAndExitEditor() {
-            saveConfig();
-            document.getElementById('adminHeader').classList.add('hidden');
-            document.getElementById('editorPanel').classList.add('hidden');
-            alert('Perfil salvo com sucesso!');
-            renderPreview();
-        }
-
-        function saveNewCredentials() {
-            const newUser = document.getElementById('changeUsernameInput').value.trim();
-            const newPass = document.getElementById('changePasswordInput').value.trim();
-            if (!newUser || !newPass) { alert("Preencha o utilizador e a nova senha."); return; }
-            appConfig.adminUser = newUser;
-            appConfig.adminPassword = newPass;
-            saveConfig();
-            document.getElementById('changePasswordInput').value = '';
-            alert("Credenciais alteradas com sucesso!");
-        }
-
-        function switchTab(tabName) {
-            ['profile', 'design', 'links', 'social', 'security'].forEach(t => {
-                const tabEl = document.getElementById(`tab-${t}`);
-                const contentEl = document.getElementById(`content-${t}`);
-                if(tabEl) tabEl.className = "flex-1 py-3 px-2 text-xs font-semibold text-slate-400 hover:text-slate-200 flex items-center justify-center gap-1 transition-all";
-                if(contentEl) contentEl.classList.add('hidden');
-            });
-            document.getElementById(`tab-${tabName}`).className = "flex-1 py-3 px-2 text-xs font-semibold text-blue-400 border-b-2 border-blue-500 flex items-center justify-center gap-1 transition-all";
-            document.getElementById(`content-${tabName}`).classList.remove('hidden');
-        }
-
-        function saveConfig() {
-            localStorage.setItem('link_central_config', JSON.stringify(appConfig));
-        }
-
-        function loadConfigFromLocalStorage() {
-            const saved = localStorage.getItem('link_central_config');
-            if (saved) {
-                try { appConfig = JSON.parse(saved); } catch(e){}
-            }
-        }
-
+        // RENDERIZAÇÃO COMPLETA DO PREVIEW E FORMULÁRIOS
         function renderAll() {
             renderProfileInputs();
             renderDesignInputs();
@@ -446,9 +722,10 @@
             lucide.createIcons();
         }
 
+        // RENDERIZAR INPUTS DO PERFIL
         function renderProfileInputs() {
-            document.getElementById('inputName').value = appConfig.profile.name || '';
-            document.getElementById('inputBio').value = appConfig.profile.bio || '';
+            document.getElementById('inputName').value = appConfig.profile.name;
+            document.getElementById('inputBio').value = appConfig.profile.bio;
         }
 
         function updateProfileData() {
@@ -458,15 +735,28 @@
             renderPreview();
         }
 
-        function setAvatarShape(shape) { appConfig.profile.avatarShape = shape; saveConfig(); renderPreview(); }
+        function setAvatarShape(shapeClass) {
+            appConfig.profile.avatarShape = shapeClass;
+            saveConfig();
+            renderPreview();
+        }
 
-        function handleImageUpload(e, target) {
-            const file = e.target.files[0];
+        // UPLOAD DE IMAGENS (BASE64)
+        function handleImageUpload(event, target) {
+            const file = event.target.files[0];
             if (!file) return;
+
             const reader = new FileReader();
-            reader.onload = function(evt) {
-                if (target === 'avatar') appConfig.profile.avatar = evt.target.result;
-                if (target === 'banner') appConfig.profile.banner = evt.target.result;
+            reader.onload = function(e) {
+                const base64Image = e.target.result;
+                if (target === 'avatar') {
+                    appConfig.profile.avatar = base64Image;
+                } else if (target === 'banner') {
+                    appConfig.profile.banner = base64Image;
+                } else if (target === 'bg') {
+                    appConfig.design.bgImage = base64Image;
+                    appConfig.design.bgType = 'image';
+                }
                 saveConfig();
                 renderAll();
             };
@@ -475,21 +765,43 @@
 
         function removeImage(target) {
             if (target === 'banner') appConfig.profile.banner = '';
-            if (target === 'avatar') appConfig.profile.avatar = '';
+            if (target === 'avatar') appConfig.profile.avatar = 'https://placehold.co/150x150/1e293b/ffffff?text=Logo';
+            if (target === 'bg') appConfig.design.bgImage = '';
             saveConfig();
             renderAll();
         }
 
+        // DESIGN E CORES
         function renderDesignInputs() {
             document.getElementById('bgColorInput').value = appConfig.design.bgColor;
+            document.getElementById('bgColorText').value = appConfig.design.bgColor;
             document.getElementById('titleColorInput').value = appConfig.design.titleColor;
             document.getElementById('bioColorInput').value = appConfig.design.bioColor;
+
+            // visibilidade dos painéis de fundo
             document.getElementById('bgSolidConfig').classList.toggle('hidden', appConfig.design.bgType !== 'solid');
             document.getElementById('bgGradientConfig').classList.toggle('hidden', appConfig.design.bgType !== 'gradient');
+            document.getElementById('bgImageConfig').classList.toggle('hidden', appConfig.design.bgType !== 'image');
         }
 
-        function setBgType(type) { appConfig.design.bgType = type; saveConfig(); renderAll(); }
-        function setGradientPreset(grad) { appConfig.design.bgGradient = grad; saveConfig(); renderPreview(); }
+        function setBgType(type) {
+            appConfig.design.bgType = type;
+            saveConfig();
+            renderAll();
+        }
+
+        function setGradientPreset(gradientClass) {
+            appConfig.design.bgGradient = gradientClass;
+            saveConfig();
+            renderPreview();
+        }
+
+        function syncColorInput(inputId, hexValue) {
+            if (/^#[0-9A-F]{6}$/i.test(hexValue)) {
+                document.getElementById(inputId).value = hexValue;
+                updateDesign();
+            }
+        }
 
         function updateDesign() {
             appConfig.design.bgColor = document.getElementById('bgColorInput').value;
@@ -499,153 +811,413 @@
             renderPreview();
         }
 
+        function setButtonStyle(style) {
+            appConfig.design.buttonStyle = style;
+            saveConfig();
+            renderPreview();
+        }
+
+        // REDES SOCIAIS
         function renderSocialInputs() {
             document.getElementById('socialWhatsapp').value = appConfig.socials.whatsapp || '';
             document.getElementById('socialInstagram').value = appConfig.socials.instagram || '';
             document.getElementById('socialTelegram').value = appConfig.socials.telegram || '';
+            document.getElementById('socialYoutube').value = appConfig.socials.youtube || '';
+            document.getElementById('socialFacebook').value = appConfig.socials.facebook || '';
+            document.getElementById('socialEmail').value = appConfig.socials.email || '';
         }
 
         function updateSocials() {
             appConfig.socials.whatsapp = document.getElementById('socialWhatsapp').value;
             appConfig.socials.instagram = document.getElementById('socialInstagram').value;
             appConfig.socials.telegram = document.getElementById('socialTelegram').value;
+            appConfig.socials.youtube = document.getElementById('socialYoutube').value;
+            appConfig.socials.facebook = document.getElementById('socialFacebook').value;
+            appConfig.socials.email = document.getElementById('socialEmail').value;
             saveConfig();
             renderPreview();
         }
 
+        // GERENCIAMENTO DE LINKS (EDITOR)
         function renderLinksListEditor() {
             const container = document.getElementById('linksList');
             container.innerHTML = '';
-            appConfig.links.forEach((link, idx) => {
+
+            appConfig.links.forEach((link, index) => {
                 const item = document.createElement('div');
-                item.className = "bg-slate-800/80 border border-slate-700 rounded-xl p-3 space-y-2";
+                item.className = "bg-slate-800/80 border border-slate-700/80 rounded-xl p-3.5 space-y-3 relative";
+                
                 item.innerHTML = `
-                    <div class="flex items-center justify-between border-b border-slate-700 pb-1.5">
-                        <span class="text-xs font-bold text-slate-300">Link ${idx + 1}</span>
-                        <button onclick="deleteLink(${link.id})" class="text-red-400 text-xs">Excluir</button>
+                    <div class="flex items-center justify-between gap-2 border-b border-slate-700/50 pb-2">
+                        <span class="text-xs font-bold text-slate-300 flex items-center gap-1.5">
+                            <span class="w-5 h-5 rounded-full bg-slate-700 flex items-center justify-center text-[10px] text-slate-400">${index + 1}</span>
+                            ${link.title || 'Novo Link'}
+                        </span>
+                        <div class="flex items-center gap-1">
+                            <button onclick="moveLink(${index}, -1)" class="p-1 hover:bg-slate-700 rounded text-slate-400" title="Mover para Cima"><i data-lucide="chevron-up" class="w-3.5 h-3.5"></i></button>
+                            <button onclick="moveLink(${index}, 1)" class="p-1 hover:bg-slate-700 rounded text-slate-400" title="Mover para Baixo"><i data-lucide="chevron-down" class="w-3.5 h-3.5"></i></button>
+                            <button onclick="deleteLink(${link.id})" class="p-1 hover:bg-red-500/20 text-red-400 rounded" title="Excluir Link"><i data-lucide="trash-2" class="w-3.5 h-3.5"></i></button>
+                        </div>
                     </div>
-                    <input type="text" value="${link.title}" oninput="updateLinkItem(${link.id}, 'title', this.value)" placeholder="Título do Botão" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
-                    <input type="text" value="${link.url}" oninput="updateLinkItem(${link.id}, 'url', this.value)" placeholder="URL de Destino (https://...)" class="w-full bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-blue-400">
+
+                    <div class="grid grid-cols-1 gap-2">
+                        <input type="text" value="${link.title}" oninput="updateLinkItem(${link.id}, 'title', this.value)" placeholder="Título do Link" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-white">
+                        <input type="text" value="${link.subtitle || ''}" oninput="updateLinkItem(${link.id}, 'subtitle', this.value)" placeholder="Subtítulo/Descrição (Opcional)" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-slate-300">
+                        <input type="text" value="${link.url}" oninput="updateLinkItem(${link.id}, 'url', this.value)" placeholder="URL de Destino (https://...)" class="bg-slate-900 border border-slate-700 rounded-lg p-2 text-xs text-blue-400">
+                    </div>
+
+                    <div class="flex items-center justify-between gap-2 pt-1">
+                        <button onclick="openIconModal(${link.id})" class="flex items-center gap-1.5 text-xs bg-slate-700 hover:bg-slate-600 text-slate-200 px-2.5 py-1.5 rounded-lg border border-slate-600 transition-all">
+                            <i data-lucide="image" class="w-3.5 h-3.5 text-blue-400"></i> Ícone
+                        </button>
+                        <div class="flex items-center gap-2">
+                            <label class="text-[10px] text-slate-400">Cor Botão:</label>
+                            <input type="color" value="${link.bgColor || '#2563eb'}" onchange="updateLinkItem(${link.id}, 'bgColor', this.value)" class="w-6 h-6 rounded border-0 bg-transparent cursor-pointer">
+                        </div>
+                    </div>
                 `;
                 container.appendChild(item);
             });
+            lucide.createIcons();
         }
 
         function addNewLink() {
-            appConfig.links.push({ id: Date.now(), title: 'Novo Botão', url: 'https://' });
+            const newId = Date.now();
+            appConfig.links.push({
+                id: newId,
+                title: 'Novo Botão de Link',
+                subtitle: 'Descrição rápida do link',
+                url: 'https://',
+                iconType: 'preset',
+                icon: 'link-2',
+                bgColor: '#2563eb',
+                textColor: '#ffffff'
+            });
             saveConfig();
             renderAll();
         }
 
-        function deleteLink(id) { appConfig.links = appConfig.links.filter(l => l.id !== id); saveConfig(); renderAll(); }
-        function updateLinkItem(id, f, val) { const l = appConfig.links.find(x => x.id === id); if(l) { l[f] = val; saveConfig(); renderPreview(); } }
+        function deleteLink(id) {
+            appConfig.links = appConfig.links.filter(l => l.id !== id);
+            saveConfig();
+            renderAll();
+        }
 
-        function renderPreview() {
-            const container = document.getElementById('previewContainer');
-            container.className = "flex-1 w-full min-h-screen flex flex-col justify-between items-center p-4 sm:p-8 overflow-y-auto relative bg-cover bg-center transition-all";
-            
-            if (appConfig.design.bgType === 'solid') {
-                container.style.backgroundColor = appConfig.design.bgColor;
-            } else {
-                container.className += ` bg-gradient-to-br ${appConfig.design.bgGradient}`;
+        function moveLink(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= appConfig.links.length) return;
+            const temp = appConfig.links[index];
+            appConfig.links[index] = appConfig.links[newIndex];
+            appConfig.links[newIndex] = temp;
+            saveConfig();
+            renderAll();
+        }
+
+        function updateLinkItem(id, field, value) {
+            const link = appConfig.links.find(l => l.id === id);
+            if (link) {
+                link[field] = value;
+                saveConfig();
+                renderPreview();
             }
+        }
 
-            // Banner
-            const bannerC = document.getElementById('previewBannerContainer');
-            if (appConfig.profile.banner) {
-                document.getElementById('previewBanner').src = appConfig.profile.banner;
-                bannerC.classList.remove('hidden');
-            } else { bannerC.classList.add('hidden'); }
+        // MODAL DE ÍCONE DO LINK
+        function openIconModal(linkId) {
+            currentEditingLinkId = linkId;
+            document.getElementById('iconModal').classList.remove('hidden');
+        }
 
-            // Avatar
-            const avatarImg = document.getElementById('previewAvatar');
-            const avatarPlaceholder = document.getElementById('emptyAvatarPlaceholder');
-            if (appConfig.profile.avatar) {
-                avatarImg.src = appConfig.profile.avatar;
-                avatarImg.className = `w-24 h-24 object-cover shadow-2xl border-2 border-white/20 transition-all ${appConfig.profile.avatarShape || 'rounded-full'}`;
-                avatarImg.classList.remove('hidden');
-                avatarPlaceholder.classList.add('hidden');
-            } else {
-                avatarImg.classList.add('hidden');
-                avatarPlaceholder.classList.remove('hidden');
+        function closeIconModal() {
+            currentEditingLinkId = null;
+            document.getElementById('iconModal').classList.add('hidden');
+        }
+
+        function selectPresetIcon(iconName) {
+            if (!currentEditingLinkId) return;
+            const link = appConfig.links.find(l => l.id === currentEditingLinkId);
+            if (link) {
+                link.iconType = 'preset';
+                link.icon = iconName;
+                saveConfig();
+                renderAll();
             }
+            closeIconModal();
+        }
 
-            // Nome e Bio
-            document.getElementById('previewName').innerText = appConfig.profile.name || 'Sua Marca / Perfil';
-            document.getElementById('previewName').style.color = appConfig.design.titleColor;
+        function handleLinkCustomIconUpload(event) {
+            const file = event.target.files[0];
+            if (!file || !currentEditingLinkId) return;
 
-            document.getElementById('previewBio').innerText = appConfig.profile.bio || 'Esta é uma apresentação. Clique em "Área do Administrador" no rodapé para criar o seu perfil personalizado.';
-            document.getElementById('previewBio').style.color = appConfig.design.bioColor;
-
-            // Links
-            const linksC = document.getElementById('previewLinks');
-            linksC.innerHTML = '';
-
-            if (appConfig.links.length === 0) {
-                for (let i = 1; i <= 2; i++) {
-                    const demoBtn = document.createElement('div');
-                    demoBtn.className = "w-full py-3.5 px-4 rounded-xl flex items-center justify-between border border-dashed border-white/30 text-white/50 text-xs";
-                    demoBtn.innerHTML = `<span>Seu Botão de Link ${i}</span><i data-lucide="chevron-right" class="w-4 h-4 opacity-40"></i>`;
-                    linksC.appendChild(demoBtn);
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const link = appConfig.links.find(l => l.id === currentEditingLinkId);
+                if (link) {
+                    link.iconType = 'custom';
+                    link.icon = e.target.result; // Base64
+                    saveConfig();
+                    renderAll();
                 }
-            } else {
-                appConfig.links.forEach(l => {
-                    const a = document.createElement('a');
-                    a.href = l.url || '#';
-                    a.target = "_blank";
-                    a.className = "w-full py-3.5 px-4 rounded-xl flex items-center justify-between gap-3 shadow-md glass-card text-white hover:bg-white/25 transition-all";
-                    a.innerHTML = `<span class="text-xs sm:text-sm font-semibold">${l.title || 'Link'}</span><i data-lucide="chevron-right" class="w-4 h-4 opacity-50"></i>`;
-                    linksC.appendChild(a);
-                });
+                closeIconModal();
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // RENDERIZAÇÃO DO PREVIEW AO VIVO (editor)
+        function renderPreview() {
+            const previewCard = document.getElementById('previewCard');
+            const previewAvatar = document.getElementById('previewAvatar');
+            const previewName = document.getElementById('previewName');
+            const previewBio = document.getElementById('previewBio');
+            const previewLinks = document.getElementById('previewLinks');
+            const previewSocials = document.getElementById('previewSocials');
+            const previewBannerContainer = document.getElementById('previewBannerContainer');
+            const previewBanner = document.getElementById('previewBanner');
+
+            // 1. Aplicar Fundo
+            previewCard.className = "w-full h-full flex-1 overflow-y-auto flex flex-col justify-between p-6 relative transition-all bg-cover bg-center";
+            if (appConfig.design.bgType === 'solid') {
+                previewCard.style.backgroundImage = 'none';
+                previewCard.style.backgroundColor = appConfig.design.bgColor;
+            } else if (appConfig.design.bgType === 'gradient') {
+                previewCard.style.backgroundImage = 'none';
+                previewCard.className += ` bg-gradient-to-br ${appConfig.design.bgGradient}`;
+            } else if (appConfig.design.bgType === 'image' && appConfig.design.bgImage) {
+                previewCard.style.backgroundImage = `url('${appConfig.design.bgImage}')`;
             }
 
-            // Redes Sociais
-            const socC = document.getElementById('previewSocials');
-            socC.innerHTML = '';
-            ['whatsapp', 'instagram', 'telegram'].forEach(k => {
-                if(appConfig.socials[k]) {
-                    const sa = document.createElement('a');
-                    sa.href = appConfig.socials[k];
-                    sa.target = "_blank";
-                    sa.className = "p-2.5 bg-white/10 hover:bg-white/20 rounded-full text-white/80 transition-all";
-                    sa.innerHTML = `<i data-lucide="${k === 'whatsapp' ? 'message-circle' : k === 'instagram' ? 'instagram' : 'send'}" class="w-4 h-4"></i>`;
-                    socC.appendChild(sa);
+            // 2. Banner
+            if (appConfig.profile.banner) {
+                previewBanner.src = appConfig.profile.banner;
+                previewBannerContainer.classList.remove('hidden');
+            } else {
+                previewBannerContainer.classList.add('hidden');
+            }
+
+            // 3. Perfil
+            previewAvatar.src = appConfig.profile.avatar || 'https://placehold.co/150x150/1e293b/ffffff?text=Logo';
+            previewAvatar.className = `w-24 h-24 object-cover shadow-2xl border-2 border-white/20 transition-all ${appConfig.profile.avatarShape}`;
+            
+            previewName.innerText = appConfig.profile.name || 'Seu Nome';
+            previewName.style.color = appConfig.design.titleColor;
+
+            previewBio.innerText = appConfig.profile.bio || '';
+            previewBio.style.color = appConfig.design.bioColor;
+
+            // 4. Renderizar Links
+            previewLinks.innerHTML = '';
+            appConfig.links.forEach(link => {
+                const btn = document.createElement('a');
+                btn.href = link.url || '#';
+                btn.target = "_blank";
+                
+                let btnClasses = "w-full py-3 px-4 rounded-xl flex items-center justify-between gap-3 transition-all duration-200 transform hover:-translate-y-0.5 active:translate-y-0 shadow-md group ";
+                
+                if (appConfig.design.buttonStyle === 'glass') {
+                    btnClasses += "glass-card hover:bg-white/25 text-white";
+                } else if (appConfig.design.buttonStyle === 'outline') {
+                    btnClasses += "border-2 border-white/80 bg-black/20 hover:bg-white/10 text-white";
+                } else {
+                    btnClasses += "text-white shadow-lg";
+                }
+
+                btn.className = btnClasses;
+                if (appConfig.design.buttonStyle === 'solid') {
+                    btn.style.backgroundColor = link.bgColor || '#2563eb';
+                }
+
+                let iconHtml = '';
+                if (link.iconType === 'custom' && link.icon) {
+                    iconHtml = `<img src="${link.icon}" class="w-5 h-5 rounded object-cover shrink-0">`;
+                } else {
+                    iconHtml = `<i data-lucide="${link.icon || 'link'}" class="w-5 h-5 shrink-0"></i>`;
+                }
+
+                btn.innerHTML = `
+                    <div class="flex items-center gap-3 overflow-hidden">
+                        ${iconHtml}
+                        <div class="text-left truncate">
+                            <div class="text-xs font-semibold leading-snug truncate">${link.title || 'Link'}</div>
+                            ${link.subtitle ? `<div class="text-[10px] opacity-80 font-normal truncate">${link.subtitle}</div>` : ''}
+                        </div>
+                    </div>
+                    <i data-lucide="chevron-right" class="w-4 h-4 opacity-50 group-hover:opacity-100 group-hover:translate-x-1 transition-all shrink-0"></i>
+                `;
+
+                previewLinks.appendChild(btn);
+            });
+
+            // 5. Renderizar Redes Sociais no Rodapé
+            previewSocials.innerHTML = '';
+            const socialMap = [
+                { key: 'whatsapp', icon: 'message-circle', color: 'hover:text-emerald-400' },
+                { key: 'instagram', icon: 'instagram', color: 'hover:text-pink-400' },
+                { key: 'telegram', icon: 'send', color: 'hover:text-sky-400' },
+                { key: 'youtube', icon: 'youtube', color: 'hover:text-red-500' },
+                { key: 'facebook', icon: 'facebook', color: 'hover:text-blue-500' },
+                { key: 'email', icon: 'mail', color: 'hover:text-amber-400' }
+            ];
+
+            socialMap.forEach(s => {
+                const url = appConfig.socials[s.key];
+                if (url && url.trim() !== '') {
+                    const iconLink = document.createElement('a');
+                    iconLink.href = url;
+                    iconLink.target = "_blank";
+                    iconLink.className = `p-2 bg-white/10 hover:bg-white/20 rounded-full text-white/80 transition-all ${s.color}`;
+                    iconLink.innerHTML = `<i data-lucide="${s.icon}" class="w-4 h-4"></i>`;
+                    previewSocials.appendChild(iconLink);
                 }
             });
 
             lucide.createIcons();
         }
 
-        // BACKUP
-        function exportConfig() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appConfig, null, 2));
-            const a = document.createElement('a');
-            a.href = dataStr;
-            a.download = `central_links_backup.json`;
-            a.click();
+        // Prévia compacta na tela inicial (quando a pessoa já salvou)
+        function renderHomePreview() {
+            const card = document.getElementById('homePreviewContent');
+            const avatar = document.getElementById('homePreviewAvatar');
+            const name = document.getElementById('homePreviewName');
+            const bio = document.getElementById('homePreviewBio');
+            const links = document.getElementById('homePreviewLinks');
+            const socials = document.getElementById('homePreviewSocials');
+            const bannerWrap = document.getElementById('homePreviewBannerWrap');
+            const banner = document.getElementById('homePreviewBanner');
+
+            // Fundo
+            card.className = "p-5 min-h-[420px] flex flex-col justify-between bg-cover bg-center relative";
+            if (appConfig.design.bgType === 'solid') {
+                card.style.backgroundImage = 'none';
+                card.style.backgroundColor = appConfig.design.bgColor;
+            } else if (appConfig.design.bgType === 'gradient') {
+                card.style.backgroundImage = 'none';
+                card.className += ` bg-gradient-to-br ${appConfig.design.bgGradient}`;
+            } else if (appConfig.design.bgType === 'image' && appConfig.design.bgImage) {
+                card.style.backgroundImage = `url('${appConfig.design.bgImage}')`;
+            }
+
+            // Banner
+            if (appConfig.profile.banner) {
+                banner.src = appConfig.profile.banner;
+                bannerWrap.classList.remove('hidden');
+            } else {
+                bannerWrap.classList.add('hidden');
+            }
+
+            // Perfil
+            avatar.src = appConfig.profile.avatar || 'https://placehold.co/150x150/1e293b/ffffff?text=Logo';
+            avatar.className = `w-16 h-16 object-cover shadow-xl border-2 border-white/20 mb-3 ${appConfig.profile.avatarShape}`;
+            name.textContent = appConfig.profile.name || 'Seu Nome';
+            name.style.color = appConfig.design.titleColor;
+            bio.textContent = appConfig.profile.bio || '';
+            bio.style.color = appConfig.design.bioColor;
+
+            // Links (versão compacta)
+            links.innerHTML = '';
+            appConfig.links.slice(0, 4).forEach(link => { // mostra no máximo 4 para não estourar
+                const btn = document.createElement('div');
+                let btnClasses = "w-full py-2.5 px-3 rounded-xl flex items-center gap-2 text-left text-[11px] ";
+                if (appConfig.design.buttonStyle === 'glass') {
+                    btnClasses += "glass-card text-white";
+                } else if (appConfig.design.buttonStyle === 'outline') {
+                    btnClasses += "border border-white/70 bg-black/20 text-white";
+                } else {
+                    btnClasses += "text-white";
+                    btn.style.backgroundColor = link.bgColor || '#2563eb';
+                }
+                btn.className = btnClasses;
+
+                let iconHtml = '';
+                if (link.iconType === 'custom' && link.icon) {
+                    iconHtml = `<img src="${link.icon}" class="w-4 h-4 rounded object-cover shrink-0">`;
+                } else {
+                    iconHtml = `<i data-lucide="${link.icon || 'link'}" class="w-4 h-4 shrink-0"></i>`;
+                }
+
+                btn.innerHTML = `${iconHtml}<span class="truncate font-medium">${link.title || 'Link'}</span>`;
+                links.appendChild(btn);
+            });
+
+            // Sociais
+            socials.innerHTML = '';
+            const socialMap = [
+                { key: 'whatsapp', icon: 'message-circle' },
+                { key: 'instagram', icon: 'instagram' },
+                { key: 'telegram', icon: 'send' },
+                { key: 'youtube', icon: 'youtube' },
+                { key: 'facebook', icon: 'facebook' },
+                { key: 'email', icon: 'mail' }
+            ];
+            socialMap.forEach(s => {
+                const url = appConfig.socials[s.key];
+                if (url && url.trim() !== '') {
+                    const icon = document.createElement('span');
+                    icon.className = "p-1.5 bg-white/10 rounded-full text-white/80";
+                    icon.innerHTML = `<i data-lucide="${s.icon}" class="w-3.5 h-3.5"></i>`;
+                    socials.appendChild(icon);
+                }
+            });
+
+            lucide.createIcons();
         }
 
-        function importConfig(e) {
-            const file = e.target.files[0];
+        // TELA CHEIA / FULLSCREEN PREVIEW
+        function toggleFullscreenPreview() {
+            const editor = document.getElementById('editorPanel');
+            const phoneFrame = document.getElementById('phoneFrame');
+            const toggleText = document.getElementById('toggleViewText');
+
+            isFullscreen = !isFullscreen;
+
+            if (isFullscreen) {
+                editor.classList.add('hidden');
+                phoneFrame.classList.remove('phone-frame');
+                phoneFrame.classList.add('w-full', 'max-w-md', 'h-[85vh]', 'rounded-3xl', 'shadow-2xl');
+                toggleText.innerText = "Exibir Editor";
+            } else {
+                editor.classList.remove('hidden');
+                phoneFrame.classList.add('phone-frame');
+                phoneFrame.classList.remove('w-full', 'max-w-md', 'h-[85vh]', 'rounded-3xl', 'shadow-2xl');
+                toggleText.innerText = "Modo Tela Cheia";
+            }
+        }
+
+        // EXPORTAR E IMPORTAR CONFIGURAÇÕES
+        function exportConfig() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appConfig, null, 2));
+            const downloadAnchor = document.createElement('a');
+            downloadAnchor.setAttribute("href", dataStr);
+            downloadAnchor.setAttribute("download", `central_links_backup.json`);
+            document.body.appendChild(downloadAnchor);
+            downloadAnchor.click();
+            downloadAnchor.remove();
+        }
+
+        function importConfig(event) {
+            const file = event.target.files[0];
             if (!file) return;
+
             const reader = new FileReader();
-            reader.onload = function(evt) {
+            reader.onload = function(e) {
                 try {
-                    appConfig = JSON.parse(evt.target.result);
+                    const imported = JSON.parse(e.target.result);
+                    appConfig = imported;
                     saveConfig();
                     renderAll();
-                    alert('Backup restaurado com sucesso!');
+                    alert('Configurações e links importados com sucesso!');
                 } catch(err) {
-                    alert('Erro ao ler arquivo de backup.');
+                    alert('Erro ao ler arquivo JSON de importação.');
                 }
             };
             reader.readAsText(file);
         }
 
         function resetToDefault() {
-            if (confirm('Deseja apagar tudo e reiniciar?')) {
-                localStorage.removeItem('link_central_config');
-                location.reload();
+            if (confirm('Tem certeza que deseja redefinir todas as alterações para o padrão?')) {
+                if (activeUsername) localStorage.removeItem('link_central_config_' + activeUsername);
+                appConfig = JSON.parse(JSON.stringify(defaultAppConfig));
+                saveConfig();
+                renderAll();
             }
         }
     </script>
