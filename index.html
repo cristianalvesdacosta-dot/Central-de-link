@@ -430,36 +430,36 @@
     <script>
         let appConfig = {
             profile: {
-                name: 'Sua Marca / Perfil',
-                bio: 'Centralize todos os seus links em um único lugar interativo e personalizável.',
-                avatar: 'https://placehold.co/150x150/3b82f6/ffffff?text=Logo',
+                name: 'Cristian Alves da Costa',
+                bio: 'Central de Pagamentos e Serviços • PicPay / Pix',
+                avatar: 'https://placehold.co/150x150/10b981/ffffff?text=CA',
                 avatarShape: 'rounded-full',
                 banner: ''
             },
             design: {
                 bgType: 'gradient',
                 bgColor: '#0f172a',
-                bgGradient: 'from-slate-900 via-indigo-950 to-slate-900',
+                bgGradient: 'from-slate-900 via-emerald-950 to-slate-900',
                 bgImage: '',
                 titleColor: '#ffffff',
                 bioColor: '#cbd5e1',
-                buttonStyle: 'glass'
+                buttonStyle: 'solid'
             },
             links: [
                 {
                     id: 1,
-                    title: 'Nosso Website Oficial',
-                    subtitle: 'Conheça nossos produtos e serviços',
-                    url: 'https://google.com',
+                    title: 'Pagar com PicPay / Pix',
+                    subtitle: 'Abrir ambiente seguro de pagamento',
+                    url: 'https://link.picpay.com/p/17929352336ade0541967c0',
                     iconType: 'preset',
-                    icon: 'globe',
-                    bgColor: '#2563eb',
+                    icon: 'zap',
+                    bgColor: '#10b981',
                     textColor: '#ffffff'
                 },
                 {
                     id: 2,
                     title: 'Falar no WhatsApp Direct',
-                    subtitle: 'Atendimento Rápido e Orçamentos',
+                    subtitle: 'Atendimento Rápido e Confirmação',
                     url: 'https://wa.me/',
                     iconType: 'preset',
                     icon: 'phone',
@@ -754,7 +754,7 @@
 
         function removeImage(target) {
             if (target === 'banner') appConfig.profile.banner = '';
-            if (target === 'avatar') appConfig.profile.avatar = 'https://placehold.co/150x150/3b82f6/ffffff?text=Logo';
+            if (target === 'avatar') appConfig.profile.avatar = 'https://placehold.co/150x150/10b981/ffffff?text=CA';
             if (target === 'bg') appConfig.design.bgImage = '';
             saveConfig();
             renderAll();
@@ -852,7 +852,7 @@
                         </button>
                         <div class="flex items-center gap-2">
                             <label class="text-[10px] text-slate-400">Cor Botão:</label>
-                            <input type="color" value="${link.bgColor || '#2563eb'}" onchange="updateLinkItem(${link.id}, 'bgColor', this.value)" class="w-6 h-6 rounded border-0 bg-transparent cursor-pointer">
+                            <input type="color" value="${link.bgColor || '#10b981'}" onchange="updateLinkItem(${link.id}, 'bgColor', this.value)" class="w-6 h-6 rounded border-0 bg-transparent cursor-pointer">
                         </div>
                     </div>
                 `;
@@ -869,7 +869,7 @@
                 url: 'https://',
                 iconType: 'preset',
                 icon: 'link-2',
-                bgColor: '#2563eb',
+                bgColor: '#10b981',
                 textColor: '#ffffff'
             });
             saveConfig();
@@ -968,7 +968,7 @@
                 previewBannerContainer.classList.add('hidden');
             }
 
-            previewAvatar.src = appConfig.profile.avatar || 'https://placehold.co/150x150/3b82f6/ffffff?text=Logo';
+            previewAvatar.src = appConfig.profile.avatar || 'https://placehold.co/150x150/10b981/ffffff?text=CA';
             previewAvatar.className = `w-24 h-24 object-cover shadow-2xl border-2 border-white/20 transition-all ${appConfig.profile.avatarShape}`;
             previewName.innerText = appConfig.profile.name || 'Seu Nome';
             previewName.style.color = appConfig.design.titleColor;
@@ -987,7 +987,7 @@
                 else btnClasses += "text-white shadow-lg";
 
                 btn.className = btnClasses;
-                if (appConfig.design.buttonStyle === 'solid') btn.style.backgroundColor = link.bgColor || '#2563eb';
+                if (appConfig.design.buttonStyle === 'solid') btn.style.backgroundColor = link.bgColor || '#10b981';
 
                 let iconHtml = link.iconType === 'custom' && link.icon ?
                     `<img src="${link.icon}" class="w-5 h-5 rounded object-cover shrink-0">` :
